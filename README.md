@@ -2,75 +2,75 @@
 
 A comprehensive C++ examination system with advanced Data Structures & Algorithms implementation, SQLite database integration, and full-featured admin/student panels.
 
-![C++](https://img.shields.io/badge/C++-17-blue.svg)
-![SQLite](https://img.shields.io/badge/Database-SQLite-green.svg)
-![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
-![Build](https://img.shields.io/badge/Build-PowerShell-blue.svg)
+##  Features
 
-## ✨ Features
+###  **Authentication System**
 
-### 🔐 **Authentication System**
-- ✅ User registration with validation
-- ✅ Secure login/logout functionality
-- ✅ Role-based access control (Admin/Student)
-- ✅ Session management
-- ✅ Password strength validation
-- ✅ Account security features
+-  User registration with validation
+-  Secure login/logout functionality
+-  Role-based access control (Admin/Student)
+-  Session management
+-  Password strength validation
+-  Account security features
 
-### 👨‍💼 **Admin Panel**
-- ✅ **Complete Question Management**
+###  **Admin Panel**
+
+-  **Complete Question Management**
   - Add new questions with multiple choice options
   - Edit existing questions
   - Delete questions with confirmation
   - Search by subject, difficulty, or keyword
   - View all questions with detailed information
-- ✅ **User Management**
+-  **User Management**
   - View all registered users
   - Monitor user roles and status
-- ✅ **System Analytics**
+-  **System Analytics**
   - Total users, questions, and results statistics
   - Question distribution by subject
   - Performance monitoring
-- ✅ **Results Management**
+-  **Results Management**
   - View all student exam results
   - Performance tracking and analysis
 
-### 🎓 **Student Panel**
-- ✅ **Full Exam System**
+###  **Student Panel**
+
+-  **Full Exam System**
   - Configure exams (subject, question count, time limits)
   - Interactive exam interface with navigation
   - Mark questions for review
   - Submit with confirmation
   - Detailed results with explanations
-- ✅ **Practice Modes**
+-  **Practice Modes**
   - Quick practice (5 questions)
   - Subject-wise practice
   - Difficulty-based practice
   - Instant feedback with explanations
-- ✅ **Performance Analytics**
+-  **Performance Analytics**
   - Personal exam history
   - Subject-wise performance analysis
   - Strengths and weaknesses identification
   - Grade calculation and trends
-- ✅ **Profile Management**
+-  **Profile Management**
   - View personal information
   - Exam statistics and metrics
 
-### 🗄️ **Database Features**
-- ✅ SQLite integration with comprehensive schema
-- ✅ **20+ Sample Questions** across multiple subjects
-- ✅ Persistent data storage for users, questions, and results
-- ✅ Advanced search and filtering capabilities
-- ✅ Data integrity and transaction support
+###  **Database Features**
 
-### 🧮 **Advanced Data Structures & Algorithms**
-- ✅ **Hash Table**: Fast user/question lookups and caching
-- ✅ **Linked List**: Dynamic data management and user lists
-- ✅ **Queue**: Exam question flow and processing queues
-- ✅ **Stack**: Navigation history and undo operations
-- ✅ **Sorting Algorithms**: Result ranking and question organization
+-  SQLite integration with comprehensive schema
+-  **20+ Sample Questions** across multiple subjects
+-  Persistent data storage for users, questions, and results
+-  Advanced search and filtering capabilities
+-  Data integrity and transaction support
 
-## 🏗️ Project Structure
+###  **Advanced Data Structures & Algorithms**
+
+-  **Hash Table**: Fast user/question lookups and caching
+-  **Linked List**: Dynamic data management and user lists
+-  **Queue**: Exam question flow and processing queues
+-  **Stack**: Navigation history and undo operations
+-  **Sorting Algorithms**: Result ranking and question organization
+
+##  Project Structure
 
 ```
 OnlineExaminationSystem/
@@ -78,27 +78,27 @@ OnlineExaminationSystem/
 ├── 📁 .vscode/                    # VS Code configuration
 │   ├── 📄 c_cpp_properties.json  # IntelliSense configuration
 │   ├── 📄 tasks.json              # Build tasks
-│   └── � loaunch.json             # Debug configuration
+│   └──  loaunch.json             # Debug configuration
 ├── 📁 build/                      # Compiled object files and executable
-│   ├── � authenticdation/         # Compiled auth objects
+│   ├──  authenticdation/         # Compiled auth objects
 │   │   ├── 📄 simple_auth.o       # Authentication object file
 │   │   └── 📄 user.o              # User management object file
-│   ├── � databoase/               # Compiled database objects
+│   ├──  databoase/               # Compiled database objects
 │   │   └── 📄 database.o          # Database object file
-│   ├── � strudcture/              # Compiled utility objects
+│   ├──  strudcture/              # Compiled utility objects
 │   │   └── 📄 utils.o             # Utilities object file
-│   ├── � exatm_system.exe         # Main executable
-│   └── � maina.o                  # Main object file
-├── � database/ u                  # SQLite database files
+│   ├──  exatm_system.exe         # Main executable
+│   └──  maina.o                  # Main object file
+├──  database/ u                  # SQLite database files
 │   └── 📄 exam.db                 # Main database file
 ├── 📁 docs/                       # Documentation
 │   ├── 📄 .gitkeep                # Keep directory in git
-│   └── �  README.md               # Additional documentation
+│   └──   README.md               # Additional documentation
 ├── 📁 sql/                        # Database schema and data
 │   ├── 📄 schema.sql              # Complete database schema
 │   └── 📄 sample_data.sql         # 20+ sample questions
 ├── 📁 src/                        # Source code directory
-│   ├── � sauthentication/         # User authentication system
+│   ├──  sauthentication/         # User authentication system
 │   │   ├── 📄 simple_auth.cpp     # Authentication implementation
 │   │   ├── 📄 simple_auth.h       # Authentication header
 │   │   ├── 📄 user.cpp            # User class implementation
@@ -133,9 +133,10 @@ OnlineExaminationSystem/
 └── 📄 test.ps1                    # Test script
 ```
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
+
 - **Compiler**: MinGW-w64 with g++ (C++17 support)
 - **Database**: SQLite3 development libraries
 - **OS**: Windows with PowerShell
@@ -143,26 +144,32 @@ OnlineExaminationSystem/
 ### Installation & Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd OnlineExaminationSystem
    ```
 
 2. **Build the project**
+
    ```powershell
    .\build.ps1
    ```
 
 3. **Test the system**
+
    ```powershell
    .\test.ps1
    ```
 
 4. **Run the application**
+
    ```powershell
    .\run.ps1
    ```
+
    or directly:
+
    ```powershell
    .\build\exam_system.exe
    ```
@@ -172,36 +179,42 @@ OnlineExaminationSystem/
    .\clean.ps1
    ```
 
-## 🔑 Default Credentials
+##  Default Credentials
 
 ### Administrator Access
+
 - **Username**: `admin`
 - **Password**: `admin123`
 
 ### Student Registration
+
 Students can register new accounts through the system interface with the following requirements:
+
 - **Username**: 3-20 characters (letters, numbers, underscore)
 - **Password**: Minimum 6 characters
 - **Email**: Valid email format
 - **Full Name**: Required field
 
-## 📊 Sample Data
+##  Sample Data
 
 The system comes pre-loaded with **20+ sample questions** across multiple subjects:
-- 📐 **Mathematics**: Arithmetic, algebra, geometry
-- 💻 **Computer Science**: Programming concepts, algorithms
-- 🔬 **Science**: Physics, chemistry, biology
-- 🌍 **General Knowledge**: Geography, history, current affairs
+
+- **Mathematics**: Arithmetic, algebra, geometry
+-  **Computer Science**: Programming concepts, algorithms
+-  **Science**: Physics, chemistry, biology
+-  **General Knowledge**: Geography, history, current affairs
 
 Each question includes:
+
 - Multiple choice options (4 choices)
 - Correct answer indication
 - Difficulty level (Easy/Medium/Hard)
 - Detailed explanations for learning
 
-## 🎯 Usage Guide
+##  Usage Guide
 
 ### For Administrators
+
 1. **Login** with admin credentials
 2. **Question Management**:
    - Add new questions with subjects and difficulty levels
@@ -213,6 +226,7 @@ Each question includes:
 5. **Results**: Review all student exam results and performance
 
 ### For Students
+
 1. **Register** a new account or **login** with existing credentials
 2. **Take Exams**:
    - Configure exam settings (subject, question count, time limit)
@@ -227,9 +241,10 @@ Each question includes:
    - Analyze performance by subject
    - Track improvement over time
 
-## 🛠️ Development
+##  Development
 
 ### Building from Source
+
 ```powershell
 # Compile individual components
 g++ -std=c++17 -Wall -Wextra -O2 -Isrc -c src/main.cpp -o build/main.o
@@ -239,43 +254,50 @@ g++ build/*.o build/*/*.o -o build/exam_system.exe -lsqlite3
 ```
 
 ### VS Code Integration
+
 The project includes VS Code configuration files:
+
 - **IntelliSense**: Proper include paths and C++17 support
 - **Build Tasks**: Integrated build, run, and test commands
 - **Debugging**: GDB integration for debugging
 
 ### Adding New Features
+
 1. Create source files in appropriate `src/` subdirectories
 2. Update `build.ps1` to include new files in compilation
 3. Follow existing code patterns and documentation standards
 4. Test thoroughly before committing
 
-## 🗃️ Database Schema
+## Database Schema
 
 ### Core Tables
+
 - **`users`**: User accounts, authentication, and profiles
 - **`questions`**: Exam questions with options and metadata
 - **`exam_results`**: Student exam scores and performance data
 
 ### Advanced Features
+
 - **Indexing**: Optimized queries for usernames, emails, and subjects
 - **Relationships**: Foreign key constraints for data integrity
 - **Triggers**: Automatic timestamp updates and statistics
 
-## 🧪 Testing
+##  Testing
 
 ### Automated Testing
+
 ```powershell
 .\test.ps1  # Runs system validation and database checks
 ```
 
 ### Manual Testing Scenarios
+
 1. **User Registration**: Test with various input combinations
 2. **Admin Functions**: Add/edit/delete questions and view results
 3. **Student Exams**: Take exams with different configurations
 4. **Database Integrity**: Verify data persistence and relationships
 
-## 🤝 Contributing
+##  Contributing
 
 1. **Fork** the repository
 2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
@@ -284,22 +306,23 @@ The project includes VS Code configuration files:
 5. **Open** a Pull Request
 
 ### Code Standards
+
 - Follow C++17 standards and best practices
 - Use meaningful variable and function names
 - Add comments for complex algorithms
 - Maintain consistent indentation and formatting
 
-## 📝 License
+##  License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support & Documentation
+##  Support & Documentation
 
 - **Documentation**: Check the `docs/` directory for detailed guides
 - **Issues**: Report bugs and request features via GitHub issues
 - **Wiki**: Additional documentation and tutorials (if available)
 
-## 🏆 Acknowledgments
+##  Acknowledgments
 
 - Built with modern C++17 features and best practices
 - SQLite for reliable and lightweight database management
@@ -308,6 +331,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ---
 
-**⭐ Star this repository if you find it helpful!**
+** Star this repository if you find it helpful!**
 
-**🔗 Connect**: Feel free to reach out for questions, suggestions, or collaboration opportunities.
+** Connect**: Feel free to reach out for questions, suggestions, or collaboration opportunities.
