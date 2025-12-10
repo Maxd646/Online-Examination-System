@@ -406,7 +406,7 @@ make run          # Start the application
 
 ### 3. **Default Access**
 - **Admin**: `admin` / `admin123`
-- **Student**: `student` / `student123`
+- **Students**: Register new accounts through the system interface
 
 ### 4. **Explore Features**
 - Add questions through admin panel
