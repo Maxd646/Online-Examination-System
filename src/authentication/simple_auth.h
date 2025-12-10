@@ -27,10 +27,10 @@ public:
     ~SimpleAuthManager();
     
     // Basic authentication
-    AuthResult login(const std::string& username, const std::string& password);
+    AuthResult login(const string& username, const string& password);
     bool logout();
-    bool registerUser(const std::string& username, const std::string& password, 
-                     const std::string& email, const std::string& fullName, 
+    bool registerUser(const string& username, const string& password, 
+                     const string& email, const string& fullName, 
                      UserRole role = UserRole::STUDENT);
     
     // Session management
@@ -39,21 +39,21 @@ public:
     const User* getCurrentUser() const { return currentUser; }
     
     // Password management
-    bool changePassword(const std::string& oldPassword, const std::string& newPassword);
+    bool changePassword(const string& oldPassword, const string& newPassword);
     
     // Validation helpers
-    bool isValidUsername(const std::string& username) const;
-    bool isValidPassword(const std::string& password) const;
-    bool isValidEmail(const std::string& email) const;
+    bool isValidUsername(const string& username) const;
+    bool isValidPassword(const string& password) const;
+    bool isValidEmail(const string& email) const;
     
     // Utility methods
-    std::string getAuthResultMessage(AuthResult result) const;
+    string getAuthResultMessage(AuthResult result) const;
     void displayCurrentUser() const;
     
 private:
-    bool validateLoginInput(const std::string& username, const std::string& password) const;
-    bool validateRegistrationInput(const std::string& username, const std::string& password, 
-                                  const std::string& email, const std::string& fullName) const;
+    bool validateLoginInput(const string& username, const string& password) const;
+    bool validateRegistrationInput(const string& username, const string& password, 
+                                  const string& email, const string& fullName) const;
 };
 
 #endif // SIMPLE_AUTH_H

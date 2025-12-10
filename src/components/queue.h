@@ -7,7 +7,7 @@
 template<typename T>
 class Queue {
 private:
-    std::vector<T> data;
+    vector<T> data;
     size_t frontIndex;
     
 public:
@@ -19,7 +19,7 @@ public:
     
     void pop() {
         if (empty()) {
-            throw std::runtime_error("Queue is empty");
+            throw runtime_error("Queue is empty");
         }
         
         frontIndex++;
@@ -33,28 +33,28 @@ public:
     
     T& front() {
         if (empty()) {
-            throw std::runtime_error("Queue is empty");
+            throw runtime_error("Queue is empty");
         }
         return data[frontIndex];
     }
     
     const T& front() const {
         if (empty()) {
-            throw std::runtime_error("Queue is empty");
+            throw runtime_error("Queue is empty");
         }
         return data[frontIndex];
     }
     
     T& back() {
         if (empty()) {
-            throw std::runtime_error("Queue is empty");
+            throw runtime_error("Queue is empty");
         }
         return data.back();
     }
     
     const T& back() const {
         if (empty()) {
-            throw std::runtime_error("Queue is empty");
+            throw runtime_error("Queue is empty");
         }
         return data.back();
     }
@@ -74,18 +74,18 @@ public:
     
     // Advanced operations
     void display() const {
-        std::cout << "Queue: [";
+        cout << "Queue: [";
         for (size_t i = frontIndex; i < data.size(); ++i) {
-            std::cout << data[i];
-            if (i < data.size() - 1) std::cout << ", ";
+            cout << data[i];
+            if (i < data.size() - 1) cout << ", ";
         }
-        std::cout << "]" << std::endl;
+        cout << "]" << endl;
     }
     
     // Peek at element at specific position from front
     const T& peek(size_t position = 0) const {
         if (frontIndex + position >= data.size()) {
-            throw std::out_of_range("Position out of range");
+            throw out_of_range("Position out of range");
         }
         return data[frontIndex + position];
     }
@@ -101,16 +101,16 @@ public:
     }
     
     // Get all elements as vector (for iteration)
-    std::vector<T> toVector() const {
-        return std::vector<T>(data.begin() + frontIndex, data.end());
+    vector<T> toVector() const {
+        return vector<T>(data.begin() + frontIndex, data.end());
     }
 };
 
 // Priority Queue implementation
-template<typename T, typename Compare = std::less<T>>
+template<typename T, typename Compare = less<T>>
 class PriorityQueue {
 private:
-    std::vector<T> heap;
+    vector<T> heap;
     Compare comp;
     
     void heapifyUp(size_t index) {
@@ -119,7 +119,7 @@ private:
             if (!comp(heap[index], heap[parent])) {
                 break;
             }
-            std::swap(heap[index], heap[parent]);
+            swap(heap[index], heap[parent]);
             index = parent;
         }
     }
@@ -144,7 +144,7 @@ private:
                 break;
             }
             
-            std::swap(heap[index], heap[smallest]);
+            swap(heap[index], heap[smallest]);
             index = smallest;
         }
     }
@@ -159,7 +159,7 @@ public:
     
     void pop() {
         if (empty()) {
-            throw std::runtime_error("Priority queue is empty");
+            throw runtime_error("Priority queue is empty");
         }
         
         heap[0] = heap.back();
@@ -172,7 +172,7 @@ public:
     
     const T& top() const {
         if (empty()) {
-            throw std::runtime_error("Priority queue is empty");
+            throw runtime_error("Priority queue is empty");
         }
         return heap[0];
     }
@@ -190,12 +190,12 @@ public:
     }
     
     void display() const {
-        std::cout << "Priority Queue: [";
+        cout << "Priority Queue: [";
         for (size_t i = 0; i < heap.size(); ++i) {
-            std::cout << heap[i];
-            if (i < heap.size() - 1) std::cout << ", ";
+            cout << heap[i];
+            if (i < heap.size() - 1) cout << ", ";
         }
-        std::cout << "]" << std::endl;
+        cout << "]" << endl;
     }
 };
 

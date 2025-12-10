@@ -10,7 +10,7 @@ template<typename T>
 class SortingAlgorithms {
 public:
     // Quick Sort with random pivot selection
-    static void quickSort(std::vector<T>& arr, int low, int high) {
+    static void quickSort(vector<T>& arr, int low, int high) {
         if (low < high) {
             int pi = randomizedPartition(arr, low, high);
             quickSort(arr, low, pi - 1);
@@ -19,7 +19,7 @@ public:
     }
     
     // Merge Sort
-    static void mergeSort(std::vector<T>& arr, int left, int right) {
+    static void mergeSort(vector<T>& arr, int left, int right) {
         if (left < right) {
             int mid = left + (right - left) / 2;
             mergeSort(arr, left, mid);
@@ -29,7 +29,7 @@ public:
     }
     
     // Heap Sort
-    static void heapSort(std::vector<T>& arr) {
+    static void heapSort(vector<T>& arr) {
         int n = arr.size();
         
         // Build max heap
@@ -39,13 +39,13 @@ public:
         
         // Extract elements from heap one by one
         for (int i = n - 1; i > 0; i--) {
-            std::swap(arr[0], arr[i]);
+            swap(arr[0], arr[i]);
             heapify(arr, i, 0);
         }
     }
     
     // Insertion Sort (good for small arrays)
-    static void insertionSort(std::vector<T>& arr) {
+    static void insertionSort(vector<T>& arr) {
         int n = arr.size();
         for (int i = 1; i < n; i++) {
             T key = arr[i];
@@ -60,7 +60,7 @@ public:
     }
     
     // Selection Sort
-    static void selectionSort(std::vector<T>& arr) {
+    static void selectionSort(vector<T>& arr) {
         int n = arr.size();
         for (int i = 0; i < n - 1; i++) {
             int minIdx = i;
@@ -70,13 +70,13 @@ public:
                 }
             }
             if (minIdx != i) {
-                std::swap(arr[i], arr[minIdx]);
+                swap(arr[i], arr[minIdx]);
             }
         }
     }
     
     // Bubble Sort
-    static void bubbleSort(std::vector<T>& arr) {
+    static void bubbleSort(vector<T>& arr) {
         int n = arr.size();
         bool swapped;
         
@@ -84,7 +84,7 @@ public:
             swapped = false;
             for (int j = 0; j < n - i - 1; j++) {
                 if (arr[j] > arr[j + 1]) {
-                    std::swap(arr[j], arr[j + 1]);
+                    swap(arr[j], arr[j + 1]);
                     swapped = true;
                 }
             }
@@ -93,9 +93,9 @@ public:
     }
     
     // Counting Sort (for integers in a specific range)
-    static void countingSort(std::vector<int>& arr, int maxVal) {
-        std::vector<int> count(maxVal + 1, 0);
-        std::vector<int> output(arr.size());
+    static void countingSort(vector<int>& arr, int maxVal) {
+        vector<int> count(maxVal + 1, 0);
+        vector<int> output(arr.size());
         
         // Count occurrences
         for (int num : arr) {
@@ -120,10 +120,10 @@ public:
     }
     
     // Radix Sort (for non-negative integers)
-    static void radixSort(std::vector<int>& arr) {
+    static void radixSort(vector<int>& arr) {
         if (arr.empty()) return;
         
-        int maxVal = *std::max_element(arr.begin(), arr.end());
+        int maxVal = *max_element(arr.begin(), arr.end());
         
         for (int exp = 1; maxVal / exp > 0; exp *= 10) {
             countingSortByDigit(arr, exp);
@@ -131,11 +131,11 @@ public:
     }
     
     // Bucket Sort (for floating point numbers in range [0, 1))
-    static void bucketSort(std::vector<double>& arr) {
+    static void bucketSort(vector<double>& arr) {
         if (arr.empty()) return;
         
         int n = arr.size();
-        std::vector<std::vector<double>> buckets(n);
+        vector<vector<double>> buckets(n);
         
         // Put array elements in different buckets
         for (double num : arr) {
@@ -146,7 +146,7 @@ public:
         
         // Sort individual buckets
         for (auto& bucket : buckets) {
-            std::sort(bucket.begin(), bucket.end());
+            sort(bucket.begin(), bucket.end());
         }
         
         // Concatenate all buckets
@@ -159,7 +159,7 @@ public:
     }
     
     // Shell Sort
-    static void shellSort(std::vector<T>& arr) {
+    static void shellSort(vector<T>& arr) {
         int n = arr.size();
         
         // Start with a big gap, then reduce the gap
@@ -178,14 +178,14 @@ public:
     }
     
     // Tim Sort (hybrid stable sorting algorithm)
-    static void timSort(std::vector<T>& arr) {
-        // Use std::stable_sort which is typically implemented as Tim Sort
-        std::stable_sort(arr.begin(), arr.end());
+    static void timSort(vector<T>& arr) {
+        // Use stable_sort which is typically implemented as Tim Sort
+        stable_sort(arr.begin(), arr.end());
     }
     
     // Custom comparator versions
     template<typename Compare>
-    static void quickSortCustom(std::vector<T>& arr, int low, int high, Compare comp) {
+    static void quickSortCustom(vector<T>& arr, int low, int high, Compare comp) {
         if (low < high) {
             int pi = partitionCustom(arr, low, high, comp);
             quickSortCustom(arr, low, pi - 1, comp);
@@ -194,7 +194,7 @@ public:
     }
     
     template<typename Compare>
-    static void mergeSortCustom(std::vector<T>& arr, int left, int right, Compare comp) {
+    static void mergeSortCustom(vector<T>& arr, int left, int right, Compare comp) {
         if (left < right) {
             int mid = left + (right - left) / 2;
             mergeSortCustom(arr, left, mid, comp);
@@ -204,18 +204,18 @@ public:
     }
     
     // Utility functions for performance analysis
-    static void measureSortingTime(std::vector<T> arr, const std::string& algorithmName, 
-                                  std::function<void(std::vector<T>&)> sortFunction) {
-        auto start = std::chrono::high_resolution_clock::now();
+    static void measureSortingTime(vector<T> arr, const string& algorithmName, 
+                                  function<void(vector<T>&)> sortFunction) {
+        auto start = chrono::high_resolution_clock::now();
         sortFunction(arr);
-        auto end = std::chrono::high_resolution_clock::now();
+        auto end = chrono::high_resolution_clock::now();
         
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-        std::cout << algorithmName << " took " << duration.count() << " microseconds" << std::endl;
+        auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
+        cout << algorithmName << " took " << duration.count() << " microseconds" << endl;
     }
     
     // Check if array is sorted
-    static bool isSorted(const std::vector<T>& arr) {
+    static bool isSorted(const vector<T>& arr) {
         for (size_t i = 1; i < arr.size(); i++) {
             if (arr[i] < arr[i - 1]) {
                 return false;
@@ -225,11 +225,11 @@ public:
     }
     
     // Generate test data
-    static std::vector<int> generateRandomArray(int size, int minVal = 0, int maxVal = 1000) {
-        std::vector<int> arr(size);
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(minVal, maxVal);
+    static vector<int> generateRandomArray(int size, int minVal = 0, int maxVal = 1000) {
+        vector<int> arr(size);
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<> dis(minVal, maxVal);
         
         for (int& num : arr) {
             num = dis(gen);
@@ -238,16 +238,16 @@ public:
         return arr;
     }
     
-    static std::vector<int> generateSortedArray(int size) {
-        std::vector<int> arr(size);
+    static vector<int> generateSortedArray(int size) {
+        vector<int> arr(size);
         for (int i = 0; i < size; i++) {
             arr[i] = i;
         }
         return arr;
     }
     
-    static std::vector<int> generateReverseSortedArray(int size) {
-        std::vector<int> arr(size);
+    static vector<int> generateReverseSortedArray(int size) {
+        vector<int> arr(size);
         for (int i = 0; i < size; i++) {
             arr[i] = size - i - 1;
         }
@@ -255,50 +255,50 @@ public:
     }
 
 private:
-    static int randomizedPartition(std::vector<T>& arr, int low, int high) {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(low, high);
+    static int randomizedPartition(vector<T>& arr, int low, int high) {
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<> dis(low, high);
         int randomIndex = dis(gen);
         
-        std::swap(arr[randomIndex], arr[high]);
+        swap(arr[randomIndex], arr[high]);
         return partition(arr, low, high);
     }
     
-    static int partition(std::vector<T>& arr, int low, int high) {
+    static int partition(vector<T>& arr, int low, int high) {
         T pivot = arr[high];
         int i = low - 1;
         
         for (int j = low; j <= high - 1; j++) {
             if (arr[j] < pivot) {
                 i++;
-                std::swap(arr[i], arr[j]);
+                swap(arr[i], arr[j]);
             }
         }
-        std::swap(arr[i + 1], arr[high]);
+        swap(arr[i + 1], arr[high]);
         return i + 1;
     }
     
     template<typename Compare>
-    static int partitionCustom(std::vector<T>& arr, int low, int high, Compare comp) {
+    static int partitionCustom(vector<T>& arr, int low, int high, Compare comp) {
         T pivot = arr[high];
         int i = low - 1;
         
         for (int j = low; j <= high - 1; j++) {
             if (comp(arr[j], pivot)) {
                 i++;
-                std::swap(arr[i], arr[j]);
+                swap(arr[i], arr[j]);
             }
         }
-        std::swap(arr[i + 1], arr[high]);
+        swap(arr[i + 1], arr[high]);
         return i + 1;
     }
     
-    static void merge(std::vector<T>& arr, int left, int mid, int right) {
+    static void merge(vector<T>& arr, int left, int mid, int right) {
         int n1 = mid - left + 1;
         int n2 = right - mid;
         
-        std::vector<T> leftArr(n1), rightArr(n2);
+        vector<T> leftArr(n1), rightArr(n2);
         
         for (int i = 0; i < n1; i++)
             leftArr[i] = arr[left + i];
@@ -332,11 +332,11 @@ private:
     }
     
     template<typename Compare>
-    static void mergeCustom(std::vector<T>& arr, int left, int mid, int right, Compare comp) {
+    static void mergeCustom(vector<T>& arr, int left, int mid, int right, Compare comp) {
         int n1 = mid - left + 1;
         int n2 = right - mid;
         
-        std::vector<T> leftArr(n1), rightArr(n2);
+        vector<T> leftArr(n1), rightArr(n2);
         
         for (int i = 0; i < n1; i++)
             leftArr[i] = arr[left + i];
@@ -369,7 +369,7 @@ private:
         }
     }
     
-    static void heapify(std::vector<T>& arr, int n, int i) {
+    static void heapify(vector<T>& arr, int n, int i) {
         int largest = i;
         int left = 2 * i + 1;
         int right = 2 * i + 2;
@@ -381,14 +381,14 @@ private:
             largest = right;
         
         if (largest != i) {
-            std::swap(arr[i], arr[largest]);
+            swap(arr[i], arr[largest]);
             heapify(arr, n, largest);
         }
     }
     
-    static void countingSortByDigit(std::vector<int>& arr, int exp) {
-        std::vector<int> output(arr.size());
-        std::vector<int> count(10, 0);
+    static void countingSortByDigit(vector<int>& arr, int exp) {
+        vector<int> output(arr.size());
+        vector<int> count(10, 0);
         
         for (int num : arr) {
             count[(num / exp) % 10]++;

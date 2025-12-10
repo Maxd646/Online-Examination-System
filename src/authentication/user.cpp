@@ -5,6 +5,7 @@
 #include <random>
 #include <iomanip>
 #include <regex>
+using namespace std;
 
 // User class implementation
 User::User() : id(0), role(UserRole::STUDENT), status(UserStatus::ACTIVE), 
@@ -12,15 +13,15 @@ User::User() : id(0), role(UserRole::STUDENT), status(UserStatus::ACTIVE),
     createdAt = Utils::getCurrentDateTime();
 }
 
-User::User(int id, const std::string& username, const std::string& password,
-           const std::string& email, const std::string& fullName, UserRole role)
+User::User(int id, const string& username, const string& password,
+           const string& email, const string& fullName, UserRole role)
     : id(id), username(username), password(password), email(email), 
       fullName(fullName), role(role), status(UserStatus::ACTIVE),
       loginAttempts(0), isLocked(false) {
     createdAt = Utils::getCurrentDateTime();
 }
 
-bool User::verifyPassword(const std::string& inputPassword) const {
+bool User::verifyPassword(const string& inputPassword) const {
     // In a real application, this would use proper password hashing
     return password == inputPassword;
 }
@@ -63,23 +64,23 @@ bool User::isValidUsername() const {
     if (username.length() < 3 || username.length() > 20) return false;
     
     // Check for valid characters (alphanumeric and underscore)
-    return std::all_of(username.begin(), username.end(), [](char c) {
-        return std::isalnum(c) || c == '_';
+    return all_of(username.begin(), username.end(), [](char c) {
+        return isalnum(c) || c == '_';
     });
 }
 
 bool User::isValidEmail() const {
     // Simple email validation
-    std::regex emailRegex(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
-    return std::regex_match(email, emailRegex);
+    regex emailRegex(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
+    return regex_match(email, emailRegex);
 }
 
 bool User::isValidPassword() const {
     if (password.length() < 6) return false;
     
     // Check for at least one digit and one letter
-    bool hasDigit = std::any_of(password.begin(), password.end(), ::isdigit);
-    bool hasLetter = std::any_of(password.begin(), password.end(), ::isalpha);
+    bool hasDigit = any_of(password.begin(), password.end(), ::isdigit);
+    bool hasLetter = any_of(password.begin(), password.end(), ::isalpha);
     
     return hasDigit && hasLetter;
 }
@@ -88,7 +89,7 @@ bool User::isActive() const {
     return status == UserStatus::ACTIVE && !isLocked;
 }
 
-std::string User::roleToString() const {
+string User::roleToString() const {
     switch (role) {
         case UserRole::ADMIN: return "Admin";
         case UserRole::STUDENT: return "Student";
@@ -97,7 +98,7 @@ std::string User::roleToString() const {
     }
 }
 
-std::string User::statusToString() const {
+string User::statusToString() const {
     switch (status) {
         case UserStatus::ACTIVE: return "Active";
         case UserStatus::INACTIVE: return "Inactive";
@@ -107,18 +108,18 @@ std::string User::statusToString() const {
     }
 }
 
-UserRole User::stringToRole(const std::string& roleStr) {
-    std::string lower = roleStr;
-    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+UserRole User::stringToRole(const string& roleStr) {
+    string lower = roleStr;
+    transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
     
     if (lower == "admin") return UserRole::ADMIN;
     if (lower == "instructor") return UserRole::INSTRUCTOR;
     return UserRole::STUDENT; // Default
 }
 
-UserStatus User::stringToStatus(const std::string& statusStr) {
-    std::string lower = statusStr;
-    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+UserStatus User::stringToStatus(const string& statusStr) {
+    string lower = statusStr;
+    transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
     
     if (lower == "inactive") return UserStatus::INACTIVE;
     if (lower == "suspended") return UserStatus::SUSPENDED;
@@ -128,23 +129,23 @@ UserStatus User::stringToStatus(const std::string& statusStr) {
 
 void User::displayProfile() const {
     Utils::printHeader("USER PROFILE");
-    std::cout << "ID: " << id << std::endl;
-    std::cout << "Username: " << username << std::endl;
-    std::cout << "Full Name: " << fullName << std::endl;
-    std::cout << "Email: " << email << std::endl;
-    std::cout << "Role: " << roleToString() << std::endl;
-    std::cout << "Status: " << statusToString() << std::endl;
-    std::cout << "Created: " << createdAt << std::endl;
-    std::cout << "Last Login: " << (lastLogin.empty() ? "Never" : lastLogin) << std::endl;
-    std::cout << "Login Attempts: " << loginAttempts << std::endl;
-    std::cout << "Account Locked: " << (isLocked ? "Yes" : "No") << std::endl;
+    cout << "ID: " << id << endl;
+    cout << "Username: " << username << endl;
+    cout << "Full Name: " << fullName << endl;
+    cout << "Email: " << email << endl;
+    cout << "Role: " << roleToString() << endl;
+    cout << "Status: " << statusToString() << endl;
+    cout << "Created: " << createdAt << endl;
+    cout << "Last Login: " << (lastLogin.empty() ? "Never" : lastLogin) << endl;
+    cout << "Login Attempts: " << loginAttempts << endl;
+    cout << "Account Locked: " << (isLocked ? "Yes" : "No") << endl;
 }
 
 void User::displayBasicInfo() const {
-    std::cout << "ID: " << std::setw(5) << id 
-              << " | Username: " << std::setw(15) << username
-              << " | Role: " << std::setw(10) << roleToString()
-              << " | Status: " << statusToString() << std::endl;
+    cout << "ID: " << setw(5) << id 
+              << " | Username: " << setw(15) << username
+              << " | Role: " << setw(10) << roleToString()
+              << " | Status: " << statusToString() << endl;
 }
 
 bool User::operator==(const User& other) const {
@@ -155,7 +156,7 @@ bool User::operator<(const User& other) const {
     return username < other.username;
 }
 
-std::ostream& operator<<(std::ostream& os, const User& user) {
+ostream& operator<<(ostream& os, const User& user) {
     os << "User{ID: " << user.id << ", Username: " << user.username 
        << ", Role: " << user.roleToString() << "}";
     return os;
@@ -217,7 +218,7 @@ User* UserManager::findUser(int userId) {
     return (index != -1) ? &users[index] : nullptr;
 }
 
-User* UserManager::findUserByUsername(const std::string& username) {
+User* UserManager::findUserByUsername(const string& username) {
     int index = findUserIndexByUsername(username);
     return (index != -1) ? &users[index] : nullptr;
 }
@@ -227,28 +228,28 @@ const User* UserManager::findUser(int userId) const {
     return (index != -1) ? &users[index] : nullptr;
 }
 
-const User* UserManager::findUserByUsername(const std::string& username) const {
+const User* UserManager::findUserByUsername(const string& username) const {
     int index = findUserIndexByUsername(username);
     return (index != -1) ? &users[index] : nullptr;
 }
 
-std::vector<User> UserManager::searchUsers(const std::string& keyword) const {
-    std::vector<User> results;
-    std::string lowerKeyword = keyword;
-    std::transform(lowerKeyword.begin(), lowerKeyword.end(), lowerKeyword.begin(), ::tolower);
+vector<User> UserManager::searchUsers(const string& keyword) const {
+    vector<User> results;
+    string lowerKeyword = keyword;
+    transform(lowerKeyword.begin(), lowerKeyword.end(), lowerKeyword.begin(), ::tolower);
     
     for (const auto& user : users) {
-        std::string lowerUsername = user.getUsername();
-        std::string lowerFullName = user.getFullName();
-        std::string lowerEmail = user.getEmail();
+        string lowerUsername = user.getUsername();
+        string lowerFullName = user.getFullName();
+        string lowerEmail = user.getEmail();
         
-        std::transform(lowerUsername.begin(), lowerUsername.end(), lowerUsername.begin(), ::tolower);
-        std::transform(lowerFullName.begin(), lowerFullName.end(), lowerFullName.begin(), ::tolower);
-        std::transform(lowerEmail.begin(), lowerEmail.end(), lowerEmail.begin(), ::tolower);
+        transform(lowerUsername.begin(), lowerUsername.end(), lowerUsername.begin(), ::tolower);
+        transform(lowerFullName.begin(), lowerFullName.end(), lowerFullName.begin(), ::tolower);
+        transform(lowerEmail.begin(), lowerEmail.end(), lowerEmail.begin(), ::tolower);
         
-        if (lowerUsername.find(lowerKeyword) != std::string::npos ||
-            lowerFullName.find(lowerKeyword) != std::string::npos ||
-            lowerEmail.find(lowerKeyword) != std::string::npos) {
+        if (lowerUsername.find(lowerKeyword) != string::npos ||
+            lowerFullName.find(lowerKeyword) != string::npos ||
+            lowerEmail.find(lowerKeyword) != string::npos) {
             results.push_back(user);
         }
     }
@@ -256,8 +257,8 @@ std::vector<User> UserManager::searchUsers(const std::string& keyword) const {
     return results;
 }
 
-std::vector<User> UserManager::getUsersByRole(UserRole role) const {
-    std::vector<User> results;
+vector<User> UserManager::getUsersByRole(UserRole role) const {
+    vector<User> results;
     for (const auto& user : users) {
         if (user.getRole() == role) {
             results.push_back(user);
@@ -266,8 +267,8 @@ std::vector<User> UserManager::getUsersByRole(UserRole role) const {
     return results;
 }
 
-std::vector<User> UserManager::getUsersByStatus(UserStatus status) const {
-    std::vector<User> results;
+vector<User> UserManager::getUsersByStatus(UserStatus status) const {
+    vector<User> results;
     for (const auto& user : users) {
         if (user.getStatus() == status) {
             results.push_back(user);
@@ -276,8 +277,8 @@ std::vector<User> UserManager::getUsersByStatus(UserStatus status) const {
     return results;
 }
 
-std::vector<User> UserManager::getActiveUsers() const {
-    std::vector<User> results;
+vector<User> UserManager::getActiveUsers() const {
+    vector<User> results;
     for (const auto& user : users) {
         if (user.isActive()) {
             results.push_back(user);
@@ -287,31 +288,31 @@ std::vector<User> UserManager::getActiveUsers() const {
 }
 
 int UserManager::getUserCountByRole(UserRole role) const {
-    return std::count_if(users.begin(), users.end(), [role](const User& user) {
+    return count_if(users.begin(), users.end(), [role](const User& user) {
         return user.getRole() == role;
     });
 }
 
 int UserManager::getUserCountByStatus(UserStatus status) const {
-    return std::count_if(users.begin(), users.end(), [status](const User& user) {
+    return count_if(users.begin(), users.end(), [status](const User& user) {
         return user.getStatus() == status;
     });
 }
 
 void UserManager::sortByUsername() {
-    std::sort(users.begin(), users.end(), [](const User& a, const User& b) {
+    sort(users.begin(), users.end(), [](const User& a, const User& b) {
         return a.getUsername() < b.getUsername();
     });
 }
 
 void UserManager::sortByRole() {
-    std::sort(users.begin(), users.end(), [](const User& a, const User& b) {
+    sort(users.begin(), users.end(), [](const User& a, const User& b) {
         return static_cast<int>(a.getRole()) < static_cast<int>(b.getRole());
     });
 }
 
 void UserManager::sortById() {
-    std::sort(users.begin(), users.end(), [](const User& a, const User& b) {
+    sort(users.begin(), users.end(), [](const User& a, const User& b) {
         return a.getId() < b.getId();
     });
 }
@@ -320,7 +321,7 @@ void UserManager::displayAllUsers() const {
     Utils::printHeader("ALL USERS");
     
     if (users.empty()) {
-        std::cout << "No users found." << std::endl;
+        cout << "No users found." << endl;
         return;
     }
     
@@ -341,25 +342,25 @@ void UserManager::displayUsersByRole(UserRole role) const {
     }
     
     if (!found) {
-        std::cout << "No users found with the specified role." << std::endl;
+        cout << "No users found with the specified role." << endl;
     }
 }
 
 void UserManager::displayUserStatistics() const {
     Utils::printHeader("USER STATISTICS");
     
-    std::cout << "Total Users: " << getTotalUsers() << std::endl;
+    cout << "Total Users: " << getTotalUsers() << endl;
     
-    std::cout << "\nBy Role:" << std::endl;
-    std::cout << "Admins: " << getUserCountByRole(UserRole::ADMIN) << std::endl;
-    std::cout << "Students: " << getUserCountByRole(UserRole::STUDENT) << std::endl;
-    std::cout << "Instructors: " << getUserCountByRole(UserRole::INSTRUCTOR) << std::endl;
+    cout << "\nBy Role:" << endl;
+    cout << "Admins: " << getUserCountByRole(UserRole::ADMIN) << endl;
+    cout << "Students: " << getUserCountByRole(UserRole::STUDENT) << endl;
+    cout << "Instructors: " << getUserCountByRole(UserRole::INSTRUCTOR) << endl;
     
-    std::cout << "\nBy Status:" << std::endl;
-    std::cout << "Active: " << getUserCountByStatus(UserStatus::ACTIVE) << std::endl;
-    std::cout << "Inactive: " << getUserCountByStatus(UserStatus::INACTIVE) << std::endl;
-    std::cout << "Suspended: " << getUserCountByStatus(UserStatus::SUSPENDED) << std::endl;
-    std::cout << "Pending: " << getUserCountByStatus(UserStatus::PENDING) << std::endl;
+    cout << "\nBy Status:" << endl;
+    cout << "Active: " << getUserCountByStatus(UserStatus::ACTIVE) << endl;
+    cout << "Inactive: " << getUserCountByStatus(UserStatus::INACTIVE) << endl;
+    cout << "Suspended: " << getUserCountByStatus(UserStatus::SUSPENDED) << endl;
+    cout << "Pending: " << getUserCountByStatus(UserStatus::PENDING) << endl;
 }
 
 int UserManager::findUserIndex(int userId) const {
@@ -371,7 +372,7 @@ int UserManager::findUserIndex(int userId) const {
     return -1;
 }
 
-int UserManager::findUserIndexByUsername(const std::string& username) const {
+int UserManager::findUserIndexByUsername(const string& username) const {
     for (size_t i = 0; i < users.size(); ++i) {
         if (users[i].getUsername() == username) {
             return static_cast<int>(i);
@@ -380,7 +381,7 @@ int UserManager::findUserIndexByUsername(const std::string& username) const {
     return -1;
 }
 
-bool UserManager::isUsernameUnique(const std::string& username, int excludeUserId) const {
+bool UserManager::isUsernameUnique(const string& username, int excludeUserId) const {
     for (const auto& user : users) {
         if (user.getUsername() == username && user.getId() != excludeUserId) {
             return false;
@@ -389,7 +390,7 @@ bool UserManager::isUsernameUnique(const std::string& username, int excludeUserI
     return true;
 }
 
-bool UserManager::isEmailUnique(const std::string& email, int excludeUserId) const {
+bool UserManager::isEmailUnique(const string& email, int excludeUserId) const {
     for (const auto& user : users) {
         if (user.getEmail() == email && user.getId() != excludeUserId) {
             return false;

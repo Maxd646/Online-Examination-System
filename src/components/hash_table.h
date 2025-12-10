@@ -17,13 +17,13 @@ private:
         Entry() : occupied(false), deleted(false) {}
     };
     
-    std::vector<Entry> table;
+    vector<Entry> table;
     size_t capacity;
     size_t size;
     double maxLoadFactor;
     
     size_t hash(const K& key) const {
-        return std::hash<K>{}(key) % capacity;
+        return hash<K>{}(key) % capacity;
     }
     
     size_t probe(size_t index) const {
@@ -35,11 +35,11 @@ private:
     }
     
     void resize() {
-        std::vector<Entry> oldTable = table;
+        vector<Entry> oldTable = table;
         size_t oldCapacity = capacity;
         
         capacity *= 2;
-        table = std::vector<Entry>(capacity);
+        table = vector<Entry>(capacity);
         size = 0;
         
         for (size_t i = 0; i < oldCapacity; ++i) {
@@ -89,7 +89,7 @@ public:
         } while (index != originalIndex && attempt < capacity);
         
         // If we reach here, table is full (shouldn't happen with proper resizing)
-        throw std::runtime_error("Hash table is full");
+        throw runtime_error("Hash table is full");
     }
     
     V* find(const K& key) {
@@ -181,13 +181,13 @@ public:
     }
     
     void clear() {
-        table = std::vector<Entry>(capacity);
+        table = vector<Entry>(capacity);
         size = 0;
     }
     
     // Get all keys
-    std::vector<K> getKeys() const {
-        std::vector<K> keys;
+    vector<K> getKeys() const {
+        vector<K> keys;
         for (const auto& entry : table) {
             if (entry.occupied && !entry.deleted) {
                 keys.push_back(entry.key);
@@ -197,8 +197,8 @@ public:
     }
     
     // Get all values
-    std::vector<V> getValues() const {
-        std::vector<V> values;
+    vector<V> getValues() const {
+        vector<V> values;
         for (const auto& entry : table) {
             if (entry.occupied && !entry.deleted) {
                 values.push_back(entry.value);
@@ -208,8 +208,8 @@ public:
     }
     
     // Get all key-value pairs
-    std::vector<std::pair<K, V>> getEntries() const {
-        std::vector<std::pair<K, V>> entries;
+    vector<pair<K, V>> getEntries() const {
+        vector<pair<K, V>> entries;
         for (const auto& entry : table) {
             if (entry.occupied && !entry.deleted) {
                 entries.push_back({entry.key, entry.value});
@@ -219,29 +219,29 @@ public:
     }
     
     void display() const {
-        std::cout << "Hash Table (size: " << size << ", capacity: " << capacity 
-                  << ", load factor: " << getLoadFactor() << "):" << std::endl;
+        cout << "Hash Table (size: " << size << ", capacity: " << capacity 
+                  << ", load factor: " << getLoadFactor() << "):" << endl;
         
         for (size_t i = 0; i < capacity; ++i) {
-            std::cout << "[" << i << "] ";
+            cout << "[" << i << "] ";
             if (table[i].occupied && !table[i].deleted) {
-                std::cout << table[i].key << " -> " << table[i].value;
+                cout << table[i].key << " -> " << table[i].value;
             } else if (table[i].deleted) {
-                std::cout << "(deleted)";
+                cout << "(deleted)";
             } else {
-                std::cout << "(empty)";
+                cout << "(empty)";
             }
-            std::cout << std::endl;
+            cout << endl;
         }
     }
     
     // Statistics
     void printStatistics() const {
-        std::cout << "Hash Table Statistics:" << std::endl;
-        std::cout << "Size: " << size << std::endl;
-        std::cout << "Capacity: " << capacity << std::endl;
-        std::cout << "Load Factor: " << getLoadFactor() << std::endl;
-        std::cout << "Max Load Factor: " << maxLoadFactor << std::endl;
+        cout << "Hash Table Statistics:" << endl;
+        cout << "Size: " << size << endl;
+        cout << "Capacity: " << capacity << endl;
+        cout << "Load Factor: " << getLoadFactor() << endl;
+        cout << "Max Load Factor: " << maxLoadFactor << endl;
         
         // Count collisions
         size_t collisions = 0;
@@ -252,37 +252,37 @@ public:
                 }
             }
         }
-        std::cout << "Collisions: " << collisions << std::endl;
+        cout << "Collisions: " << collisions << endl;
     }
 };
 
 // Specialized hash table for string keys with case-insensitive comparison
 class CaseInsensitiveHashTable {
 private:
-    HashTable<std::string, std::string> table;
+    HashTable<string, string> table;
     
-    std::string toLower(const std::string& str) const {
-        std::string result = str;
-        std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+    string toLower(const string& str) const {
+        string result = str;
+        transform(result.begin(), result.end(), result.begin(), ::tolower);
         return result;
     }
     
 public:
     CaseInsensitiveHashTable(size_t initialCapacity = 16) : table(initialCapacity) {}
     
-    void insert(const std::string& key, const std::string& value) {
+    void insert(const string& key, const string& value) {
         table.insert(toLower(key), value);
     }
     
-    std::string* find(const std::string& key) {
+    string* find(const string& key) {
         return table.find(toLower(key));
     }
     
-    bool remove(const std::string& key) {
+    bool remove(const string& key) {
         return table.remove(toLower(key));
     }
     
-    bool contains(const std::string& key) const {
+    bool contains(const string& key) const {
         return table.contains(toLower(key));
     }
     
@@ -291,7 +291,7 @@ public:
     void clear() { table.clear(); }
     
     void display() const {
-        std::cout << "Case-Insensitive ";
+        cout << "Case-Insensitive ";
         table.display();
     }
 };

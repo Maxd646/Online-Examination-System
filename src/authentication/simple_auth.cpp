@@ -14,7 +14,7 @@ SimpleAuthManager::~SimpleAuthManager()
     logout();
 }
 
-AuthResult SimpleAuthManager::login(const std::string &username, const std::string &password)
+AuthResult SimpleAuthManager::login(const string &username, const string &password)
 {
     // Validate input
     if (!validateLoginInput(username, password))
@@ -65,8 +65,8 @@ bool SimpleAuthManager::logout()
     return false;
 }
 
-bool SimpleAuthManager::registerUser(const std::string &username, const std::string &password,
-                                     const std::string &email, const std::string &fullName,
+bool SimpleAuthManager::registerUser(const string &username, const string &password,
+                                     const string &email, const string &fullName,
                                      UserRole role)
 {
     // Validate input
@@ -91,7 +91,7 @@ bool SimpleAuthManager::registerUser(const std::string &username, const std::str
     return userManager->addUser(newUser);
 }
 
-bool SimpleAuthManager::changePassword(const std::string &oldPassword, const std::string &newPassword)
+bool SimpleAuthManager::changePassword(const string &oldPassword, const string &newPassword)
 {
     if (!isLoggedIn || !currentUser)
     {
@@ -115,7 +115,7 @@ bool SimpleAuthManager::changePassword(const std::string &oldPassword, const std
     return userManager->updateUser(*currentUser);
 }
 
-bool SimpleAuthManager::isValidUsername(const std::string &username) const
+bool SimpleAuthManager::isValidUsername(const string &username) const
 {
     if (username.length() < 3 || username.length() > 20)
     {
@@ -123,11 +123,11 @@ bool SimpleAuthManager::isValidUsername(const std::string &username) const
     }
 
     // Check for valid characters (alphanumeric and underscore)
-    return std::all_of(username.begin(), username.end(), [](char c)
-                       { return std::isalnum(c) || c == '_'; });
+    return all_of(username.begin(), username.end(), [](char c)
+                       { return isalnum(c) || c == '_'; });
 }
 
-bool SimpleAuthManager::isValidPassword(const std::string &password) const
+bool SimpleAuthManager::isValidPassword(const string &password) const
 {
     if (password.length() < 6)
     {
@@ -139,14 +139,14 @@ bool SimpleAuthManager::isValidPassword(const std::string &password) const
     return true;
 }
 
-bool SimpleAuthManager::isValidEmail(const std::string &email) const
+bool SimpleAuthManager::isValidEmail(const string &email) const
 {
     // Simple email validation
-    std::regex emailRegex(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
-    return std::regex_match(email, emailRegex);
+    regex emailRegex(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
+    return regex_match(email, emailRegex);
 }
 
-std::string SimpleAuthManager::getAuthResultMessage(AuthResult result) const
+string SimpleAuthManager::getAuthResultMessage(AuthResult result) const
 {
     switch (result)
     {
@@ -171,27 +171,27 @@ void SimpleAuthManager::displayCurrentUser() const
 {
     if (isLoggedIn && currentUser)
     {
-        std::cout << "\n=== CURRENT USER ===" << std::endl;
-        std::cout << "Username: " << currentUser->getUsername() << std::endl;
-        std::cout << "Full Name: " << currentUser->getFullName() << std::endl;
-        std::cout << "Email: " << currentUser->getEmail() << std::endl;
-        std::cout << "Role: " << currentUser->roleToString() << std::endl;
-        std::cout << "Status: " << currentUser->statusToString() << std::endl;
+        cout << "\n=== CURRENT USER ===" << endl;
+        cout << "Username: " << currentUser->getUsername() << endl;
+        cout << "Full Name: " << currentUser->getFullName() << endl;
+        cout << "Email: " << currentUser->getEmail() << endl;
+        cout << "Role: " << currentUser->roleToString() << endl;
+        cout << "Status: " << currentUser->statusToString() << endl;
     }
     else
     {
-        std::cout << "No user currently logged in." << std::endl;
+        cout << "No user currently logged in." << endl;
     }
 }
 
-bool SimpleAuthManager::validateLoginInput(const std::string &username, const std::string &password) const
+bool SimpleAuthManager::validateLoginInput(const string &username, const string &password) const
 {
     return !username.empty() && !password.empty() &&
            username.length() <= 50 && password.length() <= 100;
 }
 
-bool SimpleAuthManager::validateRegistrationInput(const std::string &username, const std::string &password,
-                                                  const std::string &email, const std::string &fullName) const
+bool SimpleAuthManager::validateRegistrationInput(const string &username, const string &password,
+                                                  const string &email, const string &fullName) const
 {
     return isValidUsername(username) &&
            isValidPassword(password) &&

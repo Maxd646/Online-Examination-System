@@ -7,7 +7,7 @@
 template<typename T>
 class Stack {
 private:
-    std::vector<T> data;
+    vector<T> data;
     
 public:
     Stack() {}
@@ -18,21 +18,21 @@ public:
     
     void pop() {
         if (empty()) {
-            throw std::runtime_error("Stack is empty");
+            throw runtime_error("Stack is empty");
         }
         data.pop_back();
     }
     
     T& top() {
         if (empty()) {
-            throw std::runtime_error("Stack is empty");
+            throw runtime_error("Stack is empty");
         }
         return data.back();
     }
     
     const T& top() const {
         if (empty()) {
-            throw std::runtime_error("Stack is empty");
+            throw runtime_error("Stack is empty");
         }
         return data.back();
     }
@@ -51,18 +51,18 @@ public:
     
     // Advanced operations
     void display() const {
-        std::cout << "Stack (top to bottom): [";
+        cout << "Stack (top to bottom): [";
         for (int i = data.size() - 1; i >= 0; --i) {
-            std::cout << data[i];
-            if (i > 0) std::cout << ", ";
+            cout << data[i];
+            if (i > 0) cout << ", ";
         }
-        std::cout << "]" << std::endl;
+        cout << "]" << endl;
     }
     
     // Peek at element at specific position from top
     const T& peek(size_t position = 0) const {
         if (position >= data.size()) {
-            throw std::out_of_range("Position out of range");
+            throw out_of_range("Position out of range");
         }
         return data[data.size() - 1 - position];
     }
@@ -78,13 +78,13 @@ public:
     }
     
     // Get all elements as vector (bottom to top order)
-    std::vector<T> toVector() const {
+    vector<T> toVector() const {
         return data;
     }
     
     // Get all elements in reverse order (top to bottom)
-    std::vector<T> toVectorReverse() const {
-        std::vector<T> result;
+    vector<T> toVectorReverse() const {
+        vector<T> result;
         for (int i = data.size() - 1; i >= 0; --i) {
             result.push_back(data[i]);
         }
@@ -94,15 +94,15 @@ public:
     // Swap top two elements
     void swapTop() {
         if (size() < 2) {
-            throw std::runtime_error("Stack must have at least 2 elements to swap");
+            throw runtime_error("Stack must have at least 2 elements to swap");
         }
-        std::swap(data[data.size() - 1], data[data.size() - 2]);
+        swap(data[data.size() - 1], data[data.size() - 2]);
     }
     
     // Duplicate top element
     void duplicate() {
         if (empty()) {
-            throw std::runtime_error("Cannot duplicate from empty stack");
+            throw runtime_error("Cannot duplicate from empty stack");
         }
         push(top());
     }
@@ -149,7 +149,7 @@ public:
     
     T undo() {
         if (!canUndo()) {
-            throw std::runtime_error("Nothing to undo");
+            throw runtime_error("Nothing to undo");
         }
         
         T operation = undoStack.top();
@@ -160,7 +160,7 @@ public:
     
     T redo() {
         if (!canRedo()) {
-            throw std::runtime_error("Nothing to redo");
+            throw runtime_error("Nothing to redo");
         }
         
         T operation = redoStack.top();
@@ -183,8 +183,8 @@ public:
     }
     
     void displayStatus() const {
-        std::cout << "Undo operations available: " << undoSize() << std::endl;
-        std::cout << "Redo operations available: " << redoSize() << std::endl;
+        cout << "Undo operations available: " << undoSize() << endl;
+        cout << "Redo operations available: " << redoSize() << endl;
     }
 };
 

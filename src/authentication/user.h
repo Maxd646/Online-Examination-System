@@ -22,49 +22,49 @@ enum class UserStatus {
 class User {
 private:
     int id;
-    std::string username;
-    std::string password;
-    std::string email;
-    std::string fullName;
+    string username;
+    string password;
+    string email;
+    string fullName;
     UserRole role;
     UserStatus status;
-    std::string createdAt;
-    std::string lastLogin;
+    string createdAt;
+    string lastLogin;
     int loginAttempts;
     bool isLocked;
-    std::string lockTime;
+    string lockTime;
     
 public:
     // Constructors
     User();
-    User(int id, const std::string& username, const std::string& password, 
-         const std::string& email, const std::string& fullName, UserRole role);
+    User(int id, const string& username, const string& password, 
+         const string& email, const string& fullName, UserRole role);
     
     // Getters
     int getId() const { return id; }
-    std::string getUsername() const { return username; }
-    std::string getPassword() const { return password; }
-    std::string getEmail() const { return email; }
-    std::string getFullName() const { return fullName; }
+    string getUsername() const { return username; }
+    string getPassword() const { return password; }
+    string getEmail() const { return email; }
+    string getFullName() const { return fullName; }
     UserRole getRole() const { return role; }
     UserStatus getStatus() const { return status; }
-    std::string getCreatedAt() const { return createdAt; }
-    std::string getLastLogin() const { return lastLogin; }
+    string getCreatedAt() const { return createdAt; }
+    string getLastLogin() const { return lastLogin; }
     int getLoginAttempts() const { return loginAttempts; }
     bool getIsLocked() const { return isLocked; }
     
     // Setters
     void setId(int id) { this->id = id; }
-    void setUsername(const std::string& username) { this->username = username; }
-    void setPassword(const std::string& password) { this->password = password; }
-    void setEmail(const std::string& email) { this->email = email; }
-    void setFullName(const std::string& fullName) { this->fullName = fullName; }
+    void setUsername(const string& username) { this->username = username; }
+    void setPassword(const string& password) { this->password = password; }
+    void setEmail(const string& email) { this->email = email; }
+    void setFullName(const string& fullName) { this->fullName = fullName; }
     void setRole(UserRole role) { this->role = role; }
     void setStatus(UserStatus status) { this->status = status; }
-    void setLastLogin(const std::string& lastLogin) { this->lastLogin = lastLogin; }
+    void setLastLogin(const string& lastLogin) { this->lastLogin = lastLogin; }
     
     // Authentication methods
-    bool verifyPassword(const std::string& inputPassword) const;
+    bool verifyPassword(const string& inputPassword) const;
     void updateLastLogin();
     void incrementLoginAttempts();
     void resetLoginAttempts();
@@ -79,10 +79,10 @@ public:
     bool isActive() const;
     
     // Utility methods
-    std::string roleToString() const;
-    std::string statusToString() const;
-    static UserRole stringToRole(const std::string& roleStr);
-    static UserStatus stringToStatus(const std::string& statusStr);
+    string roleToString() const;
+    string statusToString() const;
+    static UserRole stringToRole(const string& roleStr);
+    static UserStatus stringToStatus(const string& statusStr);
     
     // Display methods
     void displayProfile() const;
@@ -91,13 +91,13 @@ public:
     // Operators
     bool operator==(const User& other) const;
     bool operator<(const User& other) const;
-    friend std::ostream& operator<<(std::ostream& os, const User& user);
+    friend ostream& operator<<(ostream& os, const User& user);
 };
 
 // User management with advanced DSA
 class UserManager {
 private:
-    std::vector<User> users;
+    vector<User> users;
     
 public:
     UserManager();
@@ -108,25 +108,25 @@ public:
     bool removeUser(int userId);
     bool updateUser(const User& user);
     User* findUser(int userId);
-    User* findUserByUsername(const std::string& username);
+    User* findUserByUsername(const string& username);
     const User* findUser(int userId) const;
-    const User* findUserByUsername(const std::string& username) const;
+    const User* findUserByUsername(const string& username) const;
     
     // User management
-    bool changePassword(int userId, const std::string& oldPassword, const std::string& newPassword);
-    bool resetPassword(int userId, const std::string& newPassword);
+    bool changePassword(int userId, const string& oldPassword, const string& newPassword);
+    bool resetPassword(int userId, const string& newPassword);
     bool lockUser(int userId);
     bool unlockUser(int userId);
     bool activateUser(int userId);
     bool deactivateUser(int userId);
     
     // Search and filter
-    std::vector<User> searchUsers(const std::string& keyword) const;
-    std::vector<User> getUsersByRole(UserRole role) const;
-    std::vector<User> getUsersByStatus(UserStatus status) const;
-    std::vector<User> getActiveUsers() const;
-    std::vector<User> getLockedUsers() const;
-    std::vector<User> getAllUsers() const { return users; }
+    vector<User> searchUsers(const string& keyword) const;
+    vector<User> getUsersByRole(UserRole role) const;
+    vector<User> getUsersByStatus(UserStatus status) const;
+    vector<User> getActiveUsers() const;
+    vector<User> getLockedUsers() const;
+    vector<User> getAllUsers() const { return users; }
     
     // Statistics
     int getTotalUsers() const { return users.size(); }
@@ -145,14 +145,14 @@ public:
     void displayUserStatistics() const;
     
     // Backup and restore
-    bool exportUsers(const std::string& filename) const;
-    bool importUsers(const std::string& filename);
+    bool exportUsers(const string& filename) const;
+    bool importUsers(const string& filename);
     
 private:
     int findUserIndex(int userId) const;
-    int findUserIndexByUsername(const std::string& username) const;
-    bool isUsernameUnique(const std::string& username, int excludeUserId = -1) const;
-    bool isEmailUnique(const std::string& email, int excludeUserId = -1) const;
+    int findUserIndexByUsername(const string& username) const;
+    bool isUsernameUnique(const string& username, int excludeUserId = -1) const;
+    bool isEmailUnique(const string& email, int excludeUserId = -1) const;
 };
 
 #endif // USER_H

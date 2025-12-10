@@ -13,8 +13,8 @@
 // Exam configuration
 struct ExamConfig {
     int questionCount;
-    std::string subject;
-    std::string difficulty;
+    string subject;
+    string difficulty;
     int timeLimit; // in minutes
     bool shuffleQuestions;
     bool shuffleOptions;
@@ -32,8 +32,8 @@ struct ExamQuestion {
     int userAnswer;
     bool isAnswered;
     bool isMarkedForReview;
-    std::chrono::steady_clock::time_point startTime;
-    std::chrono::steady_clock::time_point endTime;
+    chrono::steady_clock::time_point startTime;
+    chrono::steady_clock::time_point endTime;
     int timeSpent; // in seconds
     
     ExamQuestion(const Question& q) : question(q), userAnswer(-1), 
@@ -46,24 +46,24 @@ class ExamSession {
 private:
     int sessionId;
     int userId;
-    std::string username;
+    string username;
     ExamConfig config;
     Queue<ExamQuestion> questionQueue;
     Stack<int> navigationHistory;
-    std::vector<ExamQuestion> allQuestions;
+    vector<ExamQuestion> allQuestions;
     int currentQuestionIndex;
-    std::chrono::steady_clock::time_point examStartTime;
-    std::chrono::steady_clock::time_point examEndTime;
+    chrono::steady_clock::time_point examStartTime;
+    chrono::steady_clock::time_point examEndTime;
     bool isActive;
     bool isCompleted;
     bool isTimedOut;
     
 public:
-    ExamSession(int userId, const std::string& username, const ExamConfig& config);
+    ExamSession(int userId, const string& username, const ExamConfig& config);
     ~ExamSession();
     
     // Session management
-    bool startExam(const std::vector<Question>& questions);
+    bool startExam(const vector<Question>& questions);
     bool endExam();
     bool pauseExam();
     bool resumeExam();
@@ -91,7 +91,7 @@ public:
     ExamQuestion* getCurrentQuestion();
     const ExamQuestion* getCurrentQuestion() const;
     ExamQuestion* getQuestion(int index);
-    std::vector<ExamQuestion> getAllQuestions() const { return allQuestions; }
+    vector<ExamQuestion> getAllQuestions() const { return allQuestions; }
     
     // Progress tracking
     int getAnsweredCount() const;
@@ -101,13 +101,13 @@ public:
     
     // Results calculation
     ExamResult calculateResult();
-    std::vector<bool> getCorrectAnswers() const;
+    vector<bool> getCorrectAnswers() const;
     int getScore() const;
     
     // Getters
     int getSessionId() const { return sessionId; }
     int getUserId() const { return userId; }
-    std::string getUsername() const { return username; }
+    string getUsername() const { return username; }
     ExamConfig getConfig() const { return config; }
     int getCurrentQuestionIndex() const { return currentQuestionIndex; }
     bool getIsActive() const { return isActive; }
@@ -139,8 +139,8 @@ private:
         bool autoSave;
         bool showTimer;
         bool confirmSubmission;
-        std::string preferredSubject;
-        std::string preferredDifficulty;
+        string preferredSubject;
+        string preferredDifficulty;
         int defaultQuestionCount;
         
         StudentPreferences() : autoSave(true), showTimer(true), confirmSubmission(true),
@@ -229,7 +229,7 @@ private:
     // Helper methods
     void clearScreen() { Utils::clearScreen(); }
     void pauseSystem() { Utils::pauseSystem(); }
-    bool confirmAction(const std::string& message) { return Utils::confirmAction(message); }
+    bool confirmAction(const string& message) { return Utils::confirmAction(message); }
     
     // Input validation
     bool isValidAnswer(int answer);
@@ -239,7 +239,7 @@ private:
     // Display helpers
     void displayExamHeader();
     void displayQuestionHeader(int questionNum, int totalQuestions);
-    void displayAnswerOptions(const std::vector<std::string>& options, int selectedAnswer = -1);
+    void displayAnswerOptions(const vector<string>& options, int selectedAnswer = -1);
     void displayExamSummary();
     void displayResultSummary(const ExamResult& result);
     
@@ -262,13 +262,13 @@ private:
     // Performance calculation
     double calculateAccuracy();
     double calculateSpeed(); // questions per minute
-    std::vector<std::string> identifyWeakSubjects();
-    std::vector<std::string> identifyStrongSubjects();
+    vector<string> identifyWeakSubjects();
+    vector<string> identifyStrongSubjects();
     
     // Recommendations
-    std::vector<Question> getRecommendedQuestions();
-    std::vector<std::string> getStudyRecommendations();
-    std::string getPerformanceFeedback();
+    vector<Question> getRecommendedQuestions();
+    vector<string> getStudyRecommendations();
+    string getPerformanceFeedback();
     
     // Statistics helpers
     void updateStudentStatistics(const ExamResult& result);
@@ -276,8 +276,8 @@ private:
     void generateProgressReport();
     
     // Error handling
-    void handleExamError(const std::string& error);
-    void handleDatabaseError(const std::string& operation);
+    void handleExamError(const string& error);
+    void handleDatabaseError(const string& operation);
     void handleTimeoutError();
     
     // Preferences management
@@ -287,7 +287,7 @@ private:
     
     // Achievement system
     void checkAchievements(const ExamResult& result);
-    void unlockAchievement(const std::string& achievement);
+    void unlockAchievement(const string& achievement);
     void displayAchievements();
 };
 
@@ -296,20 +296,20 @@ class PracticeMode {
 private:
     DatabaseManager* dbManager;
     User student;
-    std::vector<Question> practiceQuestions;
-    std::vector<bool> answeredCorrectly;
+    vector<Question> practiceQuestions;
+    vector<bool> answeredCorrectly;
     
 public:
     PracticeMode(DatabaseManager* db, const User& student);
     
     // Practice sessions
-    void startPracticeSession(const std::string& subject = "", const std::string& difficulty = "");
+    void startPracticeSession(const string& subject = "", const string& difficulty = "");
     void reviewIncorrectAnswers();
     void timedPractice(int timeLimit);
-    void subjectSpecificPractice(const std::string& subject);
+    void subjectSpecificPractice(const string& subject);
     
     // Adaptive learning
-    std::vector<Question> getAdaptiveQuestions();
+    vector<Question> getAdaptiveQuestions();
     void updateDifficultyBasedOnPerformance();
     
     // Progress tracking
@@ -332,26 +332,26 @@ public:
         double averageScore;
         int totalExamsTaken;
         int totalQuestionsAnswered;
-        std::string strongestSubject;
-        std::string weakestSubject;
+        string strongestSubject;
+        string weakestSubject;
         double improvementRate;
         int currentStreak;
         int longestStreak;
     };
     
     StudentMetrics calculateMetrics();
-    std::vector<std::pair<std::string, double>> getSubjectPerformance();
-    std::vector<std::pair<std::string, double>> getDifficultyPerformance();
-    std::vector<std::pair<std::string, int>> getExamHistory();
+    vector<pair<string, double>> getSubjectPerformance();
+    vector<pair<string, double>> getDifficultyPerformance();
+    vector<pair<string, int>> getExamHistory();
     
     // Trend analysis
-    std::vector<std::pair<std::string, double>> getPerformanceTrend();
-    std::vector<std::pair<std::string, int>> getActivityTrend();
+    vector<pair<string, double>> getPerformanceTrend();
+    vector<pair<string, int>> getActivityTrend();
     
     // Recommendations
-    std::vector<std::string> getImprovementSuggestions();
-    std::vector<Question> getRecommendedPracticeQuestions();
-    std::string getNextGoal();
+    vector<string> getImprovementSuggestions();
+    vector<Question> getRecommendedPracticeQuestions();
+    string getNextGoal();
 };
 
 #endif // STUDENT_H

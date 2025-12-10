@@ -24,10 +24,10 @@ enum class AdminOperation {
 struct OperationData {
     AdminOperation type;
     int targetId;
-    std::string data; // JSON or serialized data
-    std::string timestamp;
+    string data; // JSON or serialized data
+    string timestamp;
     
-    OperationData(AdminOperation t, int id, const std::string& d) 
+    OperationData(AdminOperation t, int id, const string& d) 
         : type(t), targetId(id), data(d), timestamp(Utils::getCurrentDateTime()) {}
 };
 
@@ -36,7 +36,7 @@ private:
     DatabaseManager* dbManager;
     User currentAdmin;
     UndoRedoStack<OperationData> operationHistory;
-    LinkedList<std::string> recentActions;
+    LinkedList<string> recentActions;
     
     // Statistics cache
     mutable bool statsNeedUpdate;
@@ -60,8 +60,8 @@ public:
     void viewAllQuestions();
     void viewQuestionsBySubject();
     void searchQuestions();
-    bool importQuestionsFromFile(const std::string& filename);
-    bool exportQuestionsToFile(const std::string& filename);
+    bool importQuestionsFromFile(const string& filename);
+    bool exportQuestionsToFile(const string& filename);
     
     // User management
     void userManagementMenu();
@@ -81,7 +81,7 @@ public:
     void viewResultsByUser();
     void viewResultsByDateRange();
     void generatePerformanceReport();
-    void exportResultsToFile(const std::string& filename);
+    void exportResultsToFile(const string& filename);
     
     // System statistics and analytics
     void showSystemStatistics();
@@ -128,25 +128,25 @@ public:
     // Validation and helpers
     bool validateQuestionData(const Question& question);
     bool validateUserData(const User& user);
-    void logAdminAction(const std::string& action);
+    void logAdminAction(const string& action);
     void updateStatisticsCache();
     
     // Display helpers
-    void displayQuestionTable(const std::vector<Question>& questions);
-    void displayUserTable(const std::vector<User>& users);
-    void displayResultTable(const std::vector<ExamResult>& results);
+    void displayQuestionTable(const vector<Question>& questions);
+    void displayUserTable(const vector<User>& users);
+    void displayResultTable(const vector<ExamResult>& results);
     void displayStatisticsSummary();
     
     // Input helpers
     Question inputQuestionData();
     User inputUserData();
-    std::string selectSubject();
-    std::string selectDifficulty();
+    string selectSubject();
+    string selectDifficulty();
     UserRole selectUserRole();
     
     // File operations
-    bool exportData(const std::string& dataType, const std::string& filename);
-    bool importData(const std::string& dataType, const std::string& filename);
+    bool exportData(const string& dataType, const string& filename);
+    bool importData(const string& dataType, const string& filename);
     
     // Security and audit
     void viewAuditLog();
@@ -158,55 +158,55 @@ private:
     // Helper methods
     void clearScreen() { Utils::clearScreen(); }
     void pauseSystem() { Utils::pauseSystem(); }
-    bool confirmAction(const std::string& message) { return Utils::confirmAction(message); }
+    bool confirmAction(const string& message) { return Utils::confirmAction(message); }
     
     // Menu helpers
     int getMenuChoice(int minChoice, int maxChoice);
-    void displayMenuHeader(const std::string& title);
+    void displayMenuHeader(const string& title);
     void displayMenuFooter();
     
     // Data processing
-    std::vector<std::pair<std::string, int>> calculateSubjectDistribution();
-    std::vector<std::pair<std::string, double>> calculateDifficultyDistribution();
-    std::vector<std::pair<std::string, double>> calculatePerformanceBySubject();
-    std::vector<std::pair<std::string, int>> calculateMonthlyExamCounts();
+    vector<pair<string, int>> calculateSubjectDistribution();
+    vector<pair<string, double>> calculateDifficultyDistribution();
+    vector<pair<string, double>> calculatePerformanceBySubject();
+    vector<pair<string, int>> calculateMonthlyExamCounts();
     
     // Report generation
-    void generatePDFReport(const std::string& reportType, const std::string& filename);
-    void generateCSVReport(const std::string& reportType, const std::string& filename);
-    void generateHTMLReport(const std::string& reportType, const std::string& filename);
+    void generatePDFReport(const string& reportType, const string& filename);
+    void generateCSVReport(const string& reportType, const string& filename);
+    void generateHTMLReport(const string& reportType, const string& filename);
     
     // Validation helpers
-    bool isValidQuestionInput(const std::string& input);
-    bool isValidUserInput(const std::string& input);
-    bool isValidEmailFormat(const std::string& email);
-    bool isValidPasswordStrength(const std::string& password);
+    bool isValidQuestionInput(const string& input);
+    bool isValidUserInput(const string& input);
+    bool isValidEmailFormat(const string& email);
+    bool isValidPasswordStrength(const string& password);
     
     // Cache management
     void invalidateCache();
     void refreshCache();
     
     // Error handling
-    void handleDatabaseError(const std::string& operation);
-    void handleFileError(const std::string& operation, const std::string& filename);
-    void handleValidationError(const std::string& field, const std::string& value);
+    void handleDatabaseError(const string& operation);
+    void handleFileError(const string& operation, const string& filename);
+    void handleValidationError(const string& field, const string& value);
 };
 
 // Question import/export formats
 class QuestionImporter {
 public:
-    static std::vector<Question> importFromCSV(const std::string& filename);
-    static std::vector<Question> importFromJSON(const std::string& filename);
-    static std::vector<Question> importFromXML(const std::string& filename);
-    static bool validateImportFormat(const std::string& filename, const std::string& format);
+    static vector<Question> importFromCSV(const string& filename);
+    static vector<Question> importFromJSON(const string& filename);
+    static vector<Question> importFromXML(const string& filename);
+    static bool validateImportFormat(const string& filename, const string& format);
 };
 
 class QuestionExporter {
 public:
-    static bool exportToCSV(const std::vector<Question>& questions, const std::string& filename);
-    static bool exportToJSON(const std::vector<Question>& questions, const std::string& filename);
-    static bool exportToXML(const std::vector<Question>& questions, const std::string& filename);
-    static bool exportToPDF(const std::vector<Question>& questions, const std::string& filename);
+    static bool exportToCSV(const vector<Question>& questions, const string& filename);
+    static bool exportToJSON(const vector<Question>& questions, const string& filename);
+    static bool exportToXML(const vector<Question>& questions, const string& filename);
+    static bool exportToPDF(const vector<Question>& questions, const string& filename);
 };
 
 // Analytics and reporting
@@ -222,31 +222,31 @@ public:
         double averageScore;
         double passRate;
         int totalExams;
-        std::string topPerformingSubject;
-        std::string weakestSubject;
+        string topPerformingSubject;
+        string weakestSubject;
         double improvementTrend;
     };
     
     PerformanceMetrics calculateOverallPerformance();
-    std::vector<std::pair<std::string, double>> getSubjectPerformance();
-    std::vector<std::pair<std::string, int>> getUserActivityStats();
-    std::vector<std::pair<std::string, double>> getDifficultyAnalysis();
+    vector<pair<string, double>> getSubjectPerformance();
+    vector<pair<string, int>> getUserActivityStats();
+    vector<pair<string, double>> getDifficultyAnalysis();
     
     // Trend analysis
-    std::vector<std::pair<std::string, double>> getMonthlyPerformanceTrend();
-    std::vector<std::pair<std::string, int>> getExamFrequencyTrend();
-    std::vector<std::pair<std::string, double>> getUserEngagementTrend();
+    vector<pair<string, double>> getMonthlyPerformanceTrend();
+    vector<pair<string, int>> getExamFrequencyTrend();
+    vector<pair<string, double>> getUserEngagementTrend();
     
     // Predictive analytics
-    double predictUserPerformance(int userId, const std::string& subject);
-    std::vector<Question> recommendQuestionsForImprovement(int userId);
+    double predictUserPerformance(int userId, const string& subject);
+    vector<Question> recommendQuestionsForImprovement(int userId);
     double calculateQuestionDifficulty(int questionId);
     
     // Report generation
-    std::string generatePerformanceReport();
-    std::string generateUserActivityReport();
-    std::string generateSystemHealthReport();
-    std::string generateCustomReport(const std::vector<std::string>& metrics);
+    string generatePerformanceReport();
+    string generateUserActivityReport();
+    string generateSystemHealthReport();
+    string generateCustomReport(const vector<string>& metrics);
 };
 
 #endif // ADMIN_H

@@ -1,76 +1,76 @@
-# 🎓 Online Examination System
+# Online Examination System
 
 A comprehensive C++ examination system with advanced Data Structures & Algorithms implementation, SQLite database integration, and full-featured admin/student panels.
 
-##  Features
+## Features
 
-###  **Authentication System**
+### **Authentication System**
 
--  User registration with validation
--  Secure login/logout functionality
--  Role-based access control (Admin/Student)
--  Session management
--  Password strength validation
--  Account security features
+- User registration with validation
+- Secure login/logout functionality
+- Role-based access control (Admin/Student)
+- Session management
+- Password strength validation
+- Account security features
 
-###  **Admin Panel**
+### **Admin Panel**
 
--  **Complete Question Management**
-  - Add new questions with multiple choice options
-  - Edit existing questions
-  - Delete questions with confirmation
-  - Search by subject, difficulty, or keyword
-  - View all questions with detailed information
--  **User Management**
-  - View all registered users
-  - Monitor user roles and status
--  **System Analytics**
-  - Total users, questions, and results statistics
-  - Question distribution by subject
-  - Performance monitoring
--  **Results Management**
-  - View all student exam results
-  - Performance tracking and analysis
+- **Complete Question Management**
+- Add new questions with multiple choice options
+- Edit existing questions
+- Delete questions with confirmation
+- Search by subject, difficulty, or keyword
+- View all questions with detailed information
+- **User Management**
+- View all registered users
+- Monitor user roles and status
+- **System Analytics**
+- Total users, questions, and results statistics
+- Question distribution by subject
+- Performance monitoring
+- **Results Management**
+- View all student exam results
+- Performance tracking and analysis
 
-###  **Student Panel**
+### **Student Panel**
 
--  **Full Exam System**
-  - Configure exams (subject, question count, time limits)
-  - Interactive exam interface with navigation
-  - Mark questions for review
-  - Submit with confirmation
-  - Detailed results with explanations
--  **Practice Modes**
-  - Quick practice (5 questions)
-  - Subject-wise practice
-  - Difficulty-based practice
-  - Instant feedback with explanations
--  **Performance Analytics**
-  - Personal exam history
-  - Subject-wise performance analysis
-  - Strengths and weaknesses identification
-  - Grade calculation and trends
--  **Profile Management**
-  - View personal information
-  - Exam statistics and metrics
+- **Full Exam System**
+- Configure exams (subject, question count, time limits)
+- Interactive exam interface with navigation
+- Mark questions for review
+- Submit with confirmation
+- Detailed results with explanations
+- **Practice Modes**
+- Quick practice (5 questions)
+- Subject-wise practice
+- Difficulty-based practice
+- Instant feedback with explanations
+- **Performance Analytics**
+- Personal exam history
+- Subject-wise performance analysis
+- Strengths and weaknesses identification
+- Grade calculation and trends
+- **Profile Management**
+- View personal information
+- Exam statistics and metrics
 
-###  **Database Features**
+### **Database Features**
 
--  SQLite integration with comprehensive schema
--  **20+ Sample Questions** across multiple subjects
--  Persistent data storage for users, questions, and results
--  Advanced search and filtering capabilities
--  Data integrity and transaction support
+- SQLite integration with comprehensive schema
+- **20+ Sample Questions** across multiple subjects
+- Persistent data storage for users, questions, and results
+- Advanced search and filtering capabilities
+- Data integrity and transaction support
 
-###  **Advanced Data Structures & Algorithms**
+### **Advanced Data Structures & Algorithms**
 
--  **Hash Table**: Fast user/question lookups and caching
--  **Linked List**: Dynamic data management and user lists
--  **Queue**: Exam question flow and processing queues
--  **Stack**: Navigation history and undo operations
--  **Sorting Algorithms**: Result ranking and question organization
+- **Hash Table**: Fast user/question lookups and caching
+- **Linked List**: Dynamic data management and user lists
+- **Queue**: Exam question flow and processing queues
+- **Stack**: Navigation history and undo operations
+- **Sorting Algorithms**: Result ranking and question organization
 
-##  Project Structure
+## Project Structure
 
 ```
 OnlineExaminationSystem/
@@ -133,7 +133,7 @@ OnlineExaminationSystem/
 └── 📄 test.ps1                    # Test script
 ```
 
-##  Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -179,7 +179,7 @@ OnlineExaminationSystem/
    .\clean.ps1
    ```
 
-##  Default Credentials
+## Default Credentials
 
 ### Administrator Access
 
@@ -195,14 +195,14 @@ Students can register new accounts through the system interface with the followi
 - **Email**: Valid email format
 - **Full Name**: Required field
 
-##  Sample Data
+## Sample Data
 
 The system comes pre-loaded with **20+ sample questions** across multiple subjects:
 
 - **Mathematics**: Arithmetic, algebra, geometry
--  **Computer Science**: Programming concepts, algorithms
--  **Science**: Physics, chemistry, biology
--  **General Knowledge**: Geography, history, current affairs
+- **Computer Science**: Programming concepts, algorithms
+- **Science**: Physics, chemistry, biology
+- **General Knowledge**: Geography, history, current affairs
 
 Each question includes:
 
@@ -211,7 +211,7 @@ Each question includes:
 - Difficulty level (Easy/Medium/Hard)
 - Detailed explanations for learning
 
-##  Usage Guide
+## Usage Guide
 
 ### For Administrators
 
@@ -241,7 +241,7 @@ Each question includes:
    - Analyze performance by subject
    - Track improvement over time
 
-##  Development
+## Development
 
 ### Building from Source
 
@@ -282,7 +282,7 @@ The project includes VS Code configuration files:
 - **Relationships**: Foreign key constraints for data integrity
 - **Triggers**: Automatic timestamp updates and statistics
 
-##  Testing
+## Testing
 
 ### Automated Testing
 
@@ -297,7 +297,7 @@ The project includes VS Code configuration files:
 3. **Student Exams**: Take exams with different configurations
 4. **Database Integrity**: Verify data persistence and relationships
 
-##  Contributing
+## Contributing
 
 1. **Fork** the repository
 2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
@@ -312,17 +312,17 @@ The project includes VS Code configuration files:
 - Add comments for complex algorithms
 - Maintain consistent indentation and formatting
 
-##  License
+## License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-##  Support & Documentation
+## Support & Documentation
 
 - **Documentation**: Check the `docs/` directory for detailed guides
 - **Issues**: Report bugs and request features via GitHub issues
 - **Wiki**: Additional documentation and tutorials (if available)
 
-##  Acknowledgments
+## Acknowledgments
 
 - Built with modern C++17 features and best practices
 - SQLite for reliable and lightweight database management
@@ -331,6 +331,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ---
 
-** Star this repository if you find it helpful!**
+Star this repository if you find it helpful!
 
 ** Connect**: Feel free to reach out for questions, suggestions, or collaboration opportunities.

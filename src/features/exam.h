@@ -41,7 +41,7 @@ struct ExamSettings {
     ExamMode mode;
     int questionCount;
     int timeLimit; // in minutes, 0 = no limit
-    std::string subject;
+    string subject;
     QuestionDifficulty difficulty;
     bool shuffleQuestions;
     bool shuffleOptions;
@@ -68,8 +68,8 @@ private:
     bool isAnswered;
     bool isMarkedForReview;
     bool isVisited;
-    std::chrono::steady_clock::time_point startTime;
-    std::chrono::steady_clock::time_point endTime;
+    chrono::steady_clock::time_point startTime;
+    chrono::steady_clock::time_point endTime;
     int timeSpent; // in seconds
     int attemptCount;
     
@@ -113,15 +113,15 @@ private:
     int examId;
     User student;
     ExamSettings settings;
-    std::vector<ExamQuestionState> questions;
+    vector<ExamQuestionState> questions;
     Queue<int> questionSequence;
     Stack<int> navigationHistory;
     HashTable<int, int> questionIndexMap; // questionId -> index
     
     int currentQuestionIndex;
-    std::chrono::steady_clock::time_point examStartTime;
-    std::chrono::steady_clock::time_point examEndTime;
-    std::chrono::steady_clock::time_point lastActivityTime;
+    chrono::steady_clock::time_point examStartTime;
+    chrono::steady_clock::time_point examEndTime;
+    chrono::steady_clock::time_point lastActivityTime;
     
     bool isExamActive;
     bool isExamCompleted;
@@ -140,7 +140,7 @@ public:
     ~ExamEngine();
     
     // Exam lifecycle
-    bool initializeExam(const std::vector<Question>& questionPool);
+    bool initializeExam(const vector<Question>& questionPool);
     bool startExam();
     bool pauseExam();
     bool resumeExam();
@@ -180,12 +180,12 @@ public:
     ExamQuestionState* getCurrentQuestion();
     const ExamQuestionState* getCurrentQuestion() const;
     ExamQuestionState* getQuestion(int index);
-    const std::vector<ExamQuestionState>& getAllQuestions() const { return questions; }
+    const vector<ExamQuestionState>& getAllQuestions() const { return questions; }
     
     // Results and analysis
     ExamResult generateResult();
-    std::vector<bool> getAnswerCorrectness() const;
-    std::vector<int> getTimeSpentPerQuestion() const;
+    vector<bool> getAnswerCorrectness() const;
+    vector<int> getTimeSpentPerQuestion() const;
     double calculateAccuracy() const;
     double calculateSpeed() const; // questions per minute
     
@@ -218,10 +218,10 @@ private:
     int generateExamId();
     
     // Question selection algorithms
-    std::vector<Question> selectQuestionsByDifficulty(const std::vector<Question>& pool, 
+    vector<Question> selectQuestionsByDifficulty(const vector<Question>& pool, 
                                                      QuestionDifficulty difficulty, int count);
-    std::vector<Question> selectAdaptiveQuestions(const std::vector<Question>& pool, int count);
-    std::vector<Question> selectRandomQuestions(const std::vector<Question>& pool, int count);
+    vector<Question> selectAdaptiveQuestions(const vector<Question>& pool, int count);
+    vector<Question> selectRandomQuestions(const vector<Question>& pool, int count);
     
     // Scoring algorithms
     double calculateBasicScore() const;
@@ -238,11 +238,11 @@ private:
 // Exam factory for creating different types of exams
 class ExamFactory {
 public:
-    static ExamEngine* createPracticeExam(const User& student, const std::string& subject = "");
+    static ExamEngine* createPracticeExam(const User& student, const string& subject = "");
     static ExamEngine* createMockExam(const User& student, const ExamSettings& settings);
     static ExamEngine* createOfficialExam(const User& student, const ExamSettings& settings);
     static ExamEngine* createTimedExam(const User& student, int timeLimit, int questionCount);
-    static ExamEngine* createAdaptiveExam(const User& student, const std::string& subject = "");
+    static ExamEngine* createAdaptiveExam(const User& student, const string& subject = "");
     
     // Predefined exam configurations
     static ExamSettings getQuickPracticeSettings();
@@ -255,7 +255,7 @@ public:
 class ExamScheduler {
 private:
     DatabaseManager* dbManager;
-    std::vector<ExamEngine*> activeExams;
+    vector<ExamEngine*> activeExams;
     HashTable<int, ExamEngine*> examMap; // userId -> exam
     
 public:
@@ -270,7 +270,7 @@ public:
     
     // Active exam management
     ExamEngine* getActiveExam(int userId);
-    std::vector<ExamEngine*> getAllActiveExams();
+    vector<ExamEngine*> getAllActiveExams();
     int getActiveExamCount() const;
     
     // Cleanup and maintenance
@@ -302,10 +302,10 @@ public:
         QuestionDifficulty perceivedDifficulty;
     };
     
-    std::vector<QuestionStats> getQuestionStatistics();
-    std::vector<Question> getMostDifficultQuestions(int count = 10);
-    std::vector<Question> getEasiestQuestions(int count = 10);
-    std::vector<Question> getMostTimeConsumingQuestions(int count = 10);
+    vector<QuestionStats> getQuestionStatistics();
+    vector<Question> getMostDifficultQuestions(int count = 10);
+    vector<Question> getEasiestQuestions(int count = 10);
+    vector<Question> getMostTimeConsumingQuestions(int count = 10);
     
     // Exam performance analytics
     struct ExamPerformanceStats {
@@ -313,33 +313,33 @@ public:
         double averageTime;
         double passRate;
         int totalExams;
-        std::string mostPopularSubject;
-        std::string mostDifficultSubject;
+        string mostPopularSubject;
+        string mostDifficultSubject;
     };
     
     ExamPerformanceStats getOverallPerformance();
-    std::vector<std::pair<std::string, double>> getSubjectPerformance();
-    std::vector<std::pair<QuestionDifficulty, double>> getDifficultyPerformance();
+    vector<pair<string, double>> getSubjectPerformance();
+    vector<pair<QuestionDifficulty, double>> getDifficultyPerformance();
     
     // Trend analysis
-    std::vector<std::pair<std::string, double>> getPerformanceTrend(int days = 30);
-    std::vector<std::pair<std::string, int>> getExamFrequencyTrend(int days = 30);
+    vector<pair<string, double>> getPerformanceTrend(int days = 30);
+    vector<pair<string, int>> getExamFrequencyTrend(int days = 30);
     
     // Predictive analytics
-    double predictExamScore(int userId, const std::string& subject);
-    std::vector<Question> recommendQuestionsForUser(int userId);
-    QuestionDifficulty recommendDifficultyForUser(int userId, const std::string& subject);
+    double predictExamScore(int userId, const string& subject);
+    vector<Question> recommendQuestionsForUser(int userId);
+    QuestionDifficulty recommendDifficultyForUser(int userId, const string& subject);
 };
 
 // Exam security and integrity
 class ExamSecurity {
 private:
-    HashTable<int, std::string> examTokens; // examId -> security token
-    HashTable<int, std::chrono::steady_clock::time_point> lastActivity; // userId -> timestamp
+    HashTable<int, string> examTokens; // examId -> security token
+    HashTable<int, chrono::steady_clock::time_point> lastActivity; // userId -> timestamp
     
 public:
     // Security validation
-    bool validateExamSession(int examId, const std::string& token);
+    bool validateExamSession(int examId, const string& token);
     bool checkForCheating(int userId, const ExamEngine& exam);
     bool validateExamIntegrity(const ExamEngine& exam);
     
@@ -349,15 +349,15 @@ public:
     bool isSessionValid(int userId, int maxInactiveMinutes = 5);
     
     // Token management
-    std::string generateExamToken(int examId);
-    bool validateToken(int examId, const std::string& token);
+    string generateExamToken(int examId);
+    bool validateToken(int examId, const string& token);
     void invalidateToken(int examId);
     
     // Audit logging
     void logExamStart(int userId, int examId);
     void logExamEnd(int userId, int examId, const ExamResult& result);
-    void logSuspiciousActivity(int userId, const std::string& activity);
-    void logSecurityViolation(int userId, const std::string& violation);
+    void logSuspiciousActivity(int userId, const string& activity);
+    void logSecurityViolation(int userId, const string& violation);
 };
 
 #endif // EXAM_H

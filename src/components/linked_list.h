@@ -122,12 +122,12 @@ public:
     bool empty() const { return size == 0; }
     
     T& front() {
-        if (!head) throw std::runtime_error("List is empty");
+        if (!head) throw runtime_error("List is empty");
         return head->data;
     }
     
     T& back() {
-        if (!tail) throw std::runtime_error("List is empty");
+        if (!tail) throw runtime_error("List is empty");
         return tail->data;
     }
     
@@ -207,7 +207,7 @@ public:
             
             while (current && current->next) {
                 if (current->data > current->next->data) {
-                    std::swap(current->data, current->next->data);
+                    swap(current->data, current->next->data);
                     swapped = true;
                 }
                 current = current->next;
@@ -245,13 +245,13 @@ public:
     
     void display() const {
         Node* current = head;
-        std::cout << "[";
+        cout << "[";
         while (current) {
-            std::cout << current->data;
-            if (current->next) std::cout << " -> ";
+            cout << current->data;
+            if (current->next) cout << " -> ";
             current = current->next;
         }
-        std::cout << "]" << std::endl;
+        cout << "]" << endl;
     }
 };
 

@@ -5,23 +5,24 @@
 #include "authentication/simple_auth.h"
 #include "features/admin_stub.h"
 #include "features/student_stub.h"
+using namespace exam_system;
 
 class SimpleExamSystem {
 private:
-    std::unique_ptr<DatabaseManager> dbManager;
-    std::unique_ptr<UserManager> userManager;
-    std::unique_ptr<SimpleAuthManager> authManager;
+    unique_ptr<DatabaseManager> dbManager;
+    unique_ptr<UserManager> userManager;
+    unique_ptr<SimpleAuthManager> authManager;
     
 public:
     SimpleExamSystem() {
         // Initialize components
-        dbManager = std::make_unique<DatabaseManager>("database/exam.db");
-        userManager = std::make_unique<UserManager>();
-        authManager = std::make_unique<SimpleAuthManager>(userManager.get());
+        dbManager = make_unique<DatabaseManager>("database/exam.db");
+        userManager = make_unique<UserManager>();
+        authManager = make_unique<SimpleAuthManager>(userManager.get());
         
         // Initialize database
         if (!dbManager->initializeDatabase()) {
-            std::cerr << "Failed to initialize database!" << std::endl;
+            cerr << "Failed to initialize database!" <<endl;
             exit(1);
         }
         
@@ -45,15 +46,15 @@ private:
         Utils::clearScreen();
         Utils::printHeader("ONLINE EXAMINATION SYSTEM");
         
-        std::cout << "1. Login" << std::endl;
-        std::cout << "2. Register (Student)" << std::endl;
-        std::cout << "3. Guest Mode (Practice)" << std::endl;
-        std::cout << "4. System Information" << std::endl;
-        std::cout << "5. Exit" << std::endl;
+        cout << "1. Login" <<endl;
+        cout << "2. Register (Student)" << endl;
+        cout << "3. Guest Mode (Practice)" << endl;
+        cout << "4. System Information" << endl;
+        cout << "5. Exit" <<endl;
         
-        std::cout << "\nEnter your choice: ";
+        cout << "\nEnter your choice: ";
         int choice;
-        std::cin >> choice;
+        cin >> choice;
         
         switch (choice) {
             case 1:
@@ -72,7 +73,7 @@ private:
                 exitSystem();
                 break;
             default:
-                std::cout << "Invalid choice! Please try again." << std::endl;
+                cout << "Invalid choice! Please try again." << endl;
                 Utils::pauseSystem();
         }
     }
@@ -81,20 +82,20 @@ private:
         Utils::clearScreen();
         Utils::printHeader("USER LOGIN");
         
-        std::string username, password;
-        std::cout << "Username: ";
-        std::cin >> username;
-        std::cout << "Password: ";
-        std::cin >> password;
+        string username, password;
+       cout << "Username: ";
+       cin >> username;
+        cout << "Password: ";
+        cin >> password;
         
         AuthResult result = authManager->login(username, password);
         
         if (result == AuthResult::SUCCESS) {
-            std::cout << "\nLogin successful! Welcome " 
-                     << authManager->getCurrentUser()->getFullName() << std::endl;
+            cout << "\nLogin successful! Welcome " 
+                     << authManager->getCurrentUser()->getFullName() << endl;
             Utils::pauseSystem();
         } else {
-            std::cout << "\nLogin failed: " << authManager->getAuthResultMessage(result) << std::endl;
+            cout << "\nLogin failed: " << authManager->getAuthResultMessage(result) << endl;
             Utils::pauseSystem();
         }
     }
@@ -103,32 +104,32 @@ private:
         Utils::clearScreen();
         Utils::printHeader("STUDENT REGISTRATION");
         
-        std::string username, password, confirmPassword, email, fullName;
+        string username, password, confirmPassword, email, fullName;
         
-        std::cout << "Full Name: ";
-        std::cin.ignore();
-        std::getline(std::cin, fullName);
+        cout << "Full Name: ";
+        cin.ignore();
+        getline(cin, fullName);
         
-        std::cout << "Username: ";
-        std::cin >> username;
+        cout << "Username: ";
+        cin >> username;
         
-        std::cout << "Email: ";
-        std::cin >> email;
+        cout << "Email: ";
+        cin >> email;
         
-        std::cout << "Password: ";
-        std::cin >> password;
+        cout << "Password: ";
+        cin >> password;
         
-        std::cout << "Confirm Password: ";
-        std::cin >> confirmPassword;
+        cout << "Confirm Password: ";
+        cin >> confirmPassword;
         
         if (password != confirmPassword) {
-            std::cout << "\nPasswords don't match!" << std::endl;
+            cout << "\nPasswords don't match!" << endl;
             Utils::pauseSystem();
             return;
         }
         
         if (authManager->registerUser(username, password, email, fullName, UserRole::STUDENT)) {
-            std::cout << "\nRegistration successful! You can now login." << std::endl;
+            cout << "\nRegistration successful! You can now login." << endl;
             
             // Also add to database
             User* newUser = userManager->findUserByUsername(username);
@@ -136,13 +137,13 @@ private:
                 dbManager->insertUser(*newUser);
             }
         } else {
-            std::cout << "\nRegistration failed!" << std::endl;
-            std::cout << "Please check the following requirements:" << std::endl;
-            std::cout << "- Username: 3-20 characters, letters, numbers, and underscore only" << std::endl;
-            std::cout << "- Password: At least 6 characters" << std::endl;
-            std::cout << "- Email: Valid email format (e.g., user@domain.com)" << std::endl;
-            std::cout << "- Full Name: Cannot be empty" << std::endl;
-            std::cout << "- Username must be unique (not already taken)" << std::endl;
+            cout << "\nRegistration failed!" << endl;
+            cout << "Please check the following requirements:" << endl;
+            cout << "- Username: 3-20 characters, letters, numbers, and underscore only" << endl;
+            cout << "- Password: At least 6 characters" << endl;
+            cout << "- Email: Valid email format (e.g., user@domain.com)" << endl;
+            cout << "- Full Name: Cannot be empty" << endl;
+            cout << "- Username must be unique (not already taken)" << endl;
         }
         
         Utils::pauseSystem();
@@ -154,32 +155,32 @@ private:
         
         auto questions = dbManager->getRandomQuestions(3);
         if (questions.empty()) {
-            std::cout << "No questions available for practice mode." << std::endl;
+            cout << "No questions available for practice mode." << endl;
             Utils::pauseSystem();
             return;
         }
         
         int score = 0;
         for (size_t i = 0; i < questions.size(); ++i) {
-            std::cout << "\nQuestion " << (i + 1) << ":" << std::endl;
+            cout << "\nQuestion " << (i + 1) << ":" << endl;
             questions[i].display();
             
-            std::cout << "\nYour answer (1-4): ";
+            cout << "\nYour answer (1-4): ";
             int answer;
-            std::cin >> answer;
+            cin >> answer;
             
             if (answer - 1 == questions[i].getCorrectAnswer()) {
-                std::cout << "Correct!" << std::endl;
+                cout << "Correct!" << endl;
                 score++;
             } else {
-                std::cout << "Wrong! Correct answer was: " 
-                         << (questions[i].getCorrectAnswer() + 1) << std::endl;
+                cout << "Wrong! Correct answer was: " 
+                         << (questions[i].getCorrectAnswer() + 1) << endl;
             }
         }
         
-        std::cout << "\n=== PRACTICE RESULTS ===" << std::endl;
-        std::cout << "Score: " << score << "/" << questions.size() << std::endl;
-        std::cout << "Percentage: " << (score * 100.0 / questions.size()) << "%" << std::endl;
+        cout << "\n=== PRACTICE RESULTS ===" << endl;
+        cout << "Score: " << score << "/" << questions.size() << endl;
+        cout << "Percentage: " << (score * 100.0 / questions.size()) << "%" << endl;
         
         Utils::pauseSystem();
     }
@@ -194,23 +195,23 @@ private:
         Utils::clearScreen();
         Utils::printHeader("USER DASHBOARD");
         
-        std::cout << "Welcome, " << currentUser->getFullName() << "!" << std::endl;
-        std::cout << "Role: " << currentUser->roleToString() << std::endl;
+        cout << "Welcome, " << currentUser->getFullName() << "!" << endl;
+        cout << "Role: " << currentUser->roleToString() << endl;
         
-        std::cout << "\n1. View Profile" << std::endl;
-        std::cout << "2. Change Password" << std::endl;
+        cout << "\n1. View Profile" << endl;
+        cout << "2. Change Password" << endl;
         
         if (currentUser->getRole() == UserRole::ADMIN) {
-            std::cout << "3. Admin Panel" << std::endl;
+            cout << "3. Admin Panel" << endl;
         } else if (currentUser->getRole() == UserRole::STUDENT) {
-            std::cout << "3. Student Panel" << std::endl;
+            cout << "3. Student Panel" << endl;
         }
         
-        std::cout << "4. Logout" << std::endl;
+        cout << "4. Logout" << endl;
         
-        std::cout << "\nEnter your choice: ";
+        cout << "\nEnter your choice: ";
         int choice;
-        std::cin >> choice;
+        cin >> choice;
         
         switch (choice) {
             case 1:
@@ -230,7 +231,7 @@ private:
                 handleLogout();
                 break;
             default:
-                std::cout << "Invalid choice!" << std::endl;
+                cout << "Invalid choice!" << endl;
                 Utils::pauseSystem();
         }
     }
@@ -245,21 +246,21 @@ private:
         Utils::clearScreen();
         Utils::printHeader("CHANGE PASSWORD");
         
-        std::string oldPassword, newPassword, confirmPassword;
+        string oldPassword, newPassword, confirmPassword;
         
-        std::cout << "Current Password: ";
-        std::cin >> oldPassword;
+        cout << "Current Password: ";
+        cin >> oldPassword;
         
-        std::cout << "New Password: ";
-        std::cin >> newPassword;
+        cout << "New Password: ";
+        cin >> newPassword;
         
-        std::cout << "Confirm New Password: ";
-        std::cin >> confirmPassword;
+        cout << "Confirm New Password: ";
+        cin >> confirmPassword;
         
         if (newPassword != confirmPassword) {
-            std::cout << "\nNew passwords don't match!" << std::endl;
+            cout << "\nNew passwords don't match!" << endl;
         } else if (authManager->changePassword(oldPassword, newPassword)) {
-            std::cout << "\nPassword changed successfully!" << std::endl;
+            cout << "\nPassword changed successfully!" << endl;
             
             // Update in database
             const User* currentUser = authManager->getCurrentUser();
@@ -267,7 +268,7 @@ private:
                 dbManager->updateUser(*currentUser);
             }
         } else {
-            std::cout << "\nFailed to change password. Please check your current password." << std::endl;
+            cout << "\nFailed to change password. Please check your current password." << endl;
         }
         
         Utils::pauseSystem();
@@ -287,7 +288,7 @@ private:
     
     void handleLogout() {
         if (authManager->logout()) {
-            std::cout << "\nLogged out successfully!" << std::endl;
+            cout << "\nLogged out successfully!" << endl;
         }
         Utils::pauseSystem();
     }
@@ -296,26 +297,26 @@ private:
         Utils::clearScreen();
         Utils::printHeader("SYSTEM INFORMATION");
         
-        std::cout << "Online Examination System v2.0" << std::endl;
-        std::cout << "Simple C++ Implementation with DSA" << std::endl;
-        std::cout << "Database: SQLite" << std::endl;
-        std::cout << "\nFeatures:" << std::endl;
-        std::cout << "- User Registration & Login" << std::endl;
-        std::cout << "- Question Management" << std::endl;
-        std::cout << "- Exam Taking" << std::endl;
-        std::cout << "- Result Tracking" << std::endl;
+        cout << "Online Examination System v2.0" << endl;
+        cout << "Simple C++ Implementation with DSA" << endl;
+        cout << "Database: SQLite" << endl;
+        cout << "\nFeatures:" << endl;
+        cout << "- User Registration & Login" << endl;
+        cout << "- Question Management" << endl;
+        cout << "- Exam Taking" << endl;
+        cout << "- Result Tracking" << endl;
         
-        std::cout << "\nDatabase Statistics:" << std::endl;
-        std::cout << "Total Users: " << dbManager->getTotalUsers() << std::endl;
-        std::cout << "Total Questions: " << dbManager->getTotalQuestions() << std::endl;
-        std::cout << "Total Results: " << dbManager->getTotalExamResults() << std::endl;
+        cout << "\nDatabase Statistics:" << endl;
+        cout << "Total Users: " << dbManager->getTotalUsers() << endl;
+        cout << "Total Questions: " << dbManager->getTotalQuestions() << endl;
+        cout << "Total Results: " << dbManager->getTotalExamResults() << endl;
         
         Utils::pauseSystem();
     }
     
     void exitSystem() {
         Utils::printGoodbye();
-        std::cout << "Thank you for using Online Examination System!" << std::endl;
+        cout << "Thank you for using Online Examination System!" << endl;
         exit(0);
     }
     
@@ -342,11 +343,11 @@ int main() {
     try {
         SimpleExamSystem system;
         system.run();
-    } catch (const std::exception& e) {
-        std::cerr << "System Error: " << e.what() << std::endl;
+    } catch (const exception& e) {
+        cerr << "System Error: " << e.what() << endl;
         return 1;
     } catch (...) {
-        std::cerr << "Unknown system error occurred!" << std::endl;
+        cerr << "Unknown system error occurred!" << endl;
         return 1;
     }
     
