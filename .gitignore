@@ -1,0 +1,341 @@
+# Online Examination System - .gitignore
+
+# Build artifacts
+build/
+*.exe
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+
+# Compiled Object files
+*.slo
+*.lo
+*.obj
+*.ko
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+# scripts
+
+
+# Database files 
+database/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Temporary database files
+*.db-shm
+*.db-wal
+*.db-journal
+
+# Log files
+*.log
+logs/
+debug.log
+error.log
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+*~
+*.swp
+*.swo
+
+# IDE and Editor files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+*.code-workspace
+
+# Visual Studio
+.vs/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+!.vscode/c_cpp_properties.json
+!.vscode/tasks.json
+
+# CLion
+.idea/
+cmake-build-*/
+
+# Code::Blocks
+*.cbp
+*.layout
+*.depend
+
+# Dev-C++
+*.dev
+
+# Qt Creator
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+*.moc.cpp
+*.qm
+*.prl
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# Make
+Makefile
+*.make
+
+# Autotools
+/autom4te.cache
+/aclocal.m4
+/compile
+/configure
+/depcomp
+/install-sh
+/missing
+/stamp-h1
+config.log
+config.status
+
+# Package managers
+vcpkg_installed/
+conan.lock
+conanbuildinfo.*
+conandata.yml
+
+# Testing
+test_results/
+coverage/
+*.gcov
+*.gcda
+*.gcno
+
+# Documentation
+docs/html/
+docs/latex/
+*.pdf
+!README.pdf
+!documentation.pdf
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Windows
+*.lnk
+
+# Linux
+*~
+
+# Temporary files
+temp/
+tmp/
+*.temp
+
+# Archive files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Configuration files (if they contain sensitive data)
+config.ini
+settings.conf
+*.config
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Script execution policies and security
+ExecutionPolicy.txt
+script_security.log
+
+# PowerShell modules (if any)
+Modules/
+PSModules/
+
+# Script debugging
+*.pdb
+script_debug.log
+debug_output.txt
+
+# Automated script outputs
+automation_log.txt
+scheduled_task.log
+cron_output.log
+
+# Profiling data
+*.prof
+gmon.out
+
+# Valgrind
+*.memcheck
+*.helgrind
+*.drd
+
+# Core dumps
+core
+core.*
+vgcore.*
+
+# Custom build scripts output
+build_output.txt
+compile_log.txt
+
+# PowerShell script artifacts
+*.ps1xml
+*.psd1
+*.psm1
+*.ps1.bak
+*.ps1.orig
+*.ps1.tmp
+
+# Script execution logs
+script_output.log
+execution.log
+powershell.log
+
+# Script temporary files
+*.ps1~
+script_temp/
+temp_scripts/
+
+# Batch file artifacts
+*.bat.bak
+*.bat.orig
+*.bat.tmp
+*.cmd.bak
+*.cmd.orig
+*.cmd.tmp
+
+# Shell script artifacts (if using WSL/Linux)
+*.sh.bak
+*.sh.orig
+*.sh.tmp
+*.bash_history
+*.zsh_history
+
+# Script configuration files
+script_config.ini
+script_settings.conf
+.scriptrc
+
+# Project specific ignores
+exam_system.exe
+exam_system
+simple_exam_system.exe
+
+# Keep important scripts but ignore their artifacts
+!build.ps1
+!run.ps1
+!test.ps1
+!clean.ps1
+
+# Ignore utility/development scripts
+check_git_status.ps1
+dev_*.ps1
+temp_*.ps1
+debug_*.ps1
+
+# Backup question files
+questions_backup.txt
+users_backup.txt
+results_backup.txt
+
+# Export files
+*.csv
+*.json
+*.xml
+exports/
+
+# Cache directories
+.cache/
+cache/
+
+# Node.js (if using any JS tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python 
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.ps1
+
+# Rust (if using any Rust components)
+target/
+Cargo.lock
+
+# Go (if using any Go components)
+*.exe~
+vendor/
+
+# Java (if using any Java components)
+*.class
+*.jar
+*.war
+*.ear
+
+# Ignore but keep directory structure
+!.gitkeep
+!*/
