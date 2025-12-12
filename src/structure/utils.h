@@ -10,105 +10,144 @@
 #include <algorithm>
 #include <random>
 
+using namespace std;
+
 // Forward declarations for DSA components
-template<typename T> class LinkedList;
-template<typename T> class Stack;
-template<typename T> class Queue;
-template<typename K, typename V> class HashTable;
+template <typename T>
+class LinkedList;
+template <typename T>
+class Stack;
+template <typename T>
+class Queue;
+template <typename K, typename V>
+class HashTable;
 
 // Utility Functions
-class Utils {
+class Utils
+{
 public:
-    static string getCurrentDateTime() {
+    static string getCurrentDateTime()
+    {
         auto now = chrono::system_clock::now();
         time_t time = chrono::system_clock::to_time_t(now);
         stringstream ss;
         ss << put_time(localtime(&time), "%Y-%m-%d %H:%M:%S");
         return ss.str();
     }
-    
-    static void clearScreen() {
-        #ifdef _WIN32
-            system("cls");
-        #else
-            system("clear");
-        #endif
+
+    static void clearScreen()
+    {
+#ifdef _WIN32
+        system("cls");
+#else
+        system("clear");
+#endif
     }
-    
-    static void pauseSystem() {
+
+    static void pauseSystem()
+    {
         cout << "\nPress Enter to continue...";
         cin.ignore();
         cin.get();
     }
-    
-    static string trim(const string& str) {
+
+    static string trim(const string &str)
+    {
         size_t first = str.find_first_not_of(' ');
-        if (string::npos == first) {
+        if (string::npos == first)
+        {
             return str;
         }
         size_t last = str.find_last_not_of(' ');
         return str.substr(first, (last - first + 1));
     }
-    
-    static vector<string> split(const string& str, char delimiter) {
+
+    static vector<string> split(const string &str, char delimiter)
+    {
         vector<string> tokens;
         stringstream ss(str);
         string token;
-        
-        while (getline(ss, token, delimiter)) {
+
+        while (getline(ss, token, delimiter))
+        {
             tokens.push_back(trim(token));
         }
-        
+
         return tokens;
     }
-    
-    static string generateRandomString(int length) {
+
+    static string generateRandomString(int length)
+    {
         const string charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         random_device rd;
         mt19937 gen(rd());
         uniform_int_distribution<> dis(0, charset.size() - 1);
-        
+
         string result;
-        for (int i = 0; i < length; ++i) {
+        for (int i = 0; i < length; ++i)
+        {
             result += charset[dis(gen)];
         }
-        
+
         return result;
     }
-    
-    template<typename T>
-    static void shuffleVector(vector<T>& vec) {
+
+    template <typename T>
+    static void shuffleVector(vector<T> &vec)
+    {
         random_device rd;
         mt19937 g(rd());
         shuffle(vec.begin(), vec.end(), g);
     }
-    
-    static double calculatePercentage(int score, int total) {
-        if (total == 0) return 0.0;
+
+    static double calculatePercentage(int score, int total)
+    {
+        if (total == 0)
+            return 0.0;
         return (static_cast<double>(score) / total) * 100.0;
     }
-    
-    static void printHeader(const string& title) {
+
+    static void printHeader(const string &title)
+    {
         string border(50, '=');
-        cout << "\n" << border << endl;
-        cout << setw(25 + title.length()/2) << title << endl;
+        cout << "\n"
+             << border << endl;
+        cout << setw(25 + title.length() / 2) << title << endl;
         cout << border << endl;
     }
-    
-    static void printSubHeader(const string& subtitle) {
+
+    static void printBrightHeader(const string &title)
+    {
+        cout << "\n";
+        cout << "+" << string(48, '=') << "+" << endl;
+        cout << "|" << setw(24 + title.length() / 2) << title 
+             << setw(24 - title.length() / 2) << "|" << endl;
+        cout << "+" << string(48, '=') << "+" << endl;
+    }
+
+    static void printColoredText(const string &text, const string &color = "white")
+    {
+        // Simple text output - colors can be added later if needed
+        (void)color; // Suppress unused parameter warning
+        cout << text;
+    }
+
+    static void printSubHeader(const string &subtitle)
+    {
         string border(40, '-');
-        cout << "\n" << border << endl;
+        cout << "\n"
+             << border << endl;
         cout << subtitle << endl;
         cout << border << endl;
     }
-    
+
     static void printWelcomeMessage();
     static void printGoodbye();
-    static void printLoadingAnimation(const string& message);
-    static void printProgressBar(int current, int total, const string& prefix = "Progress");
-    static bool confirmAction(const string& message);
-    static void printTableHeader(const vector<string>& headers, const vector<int>& widths);
-    static void printTableRow(const vector<string>& data, const vector<int>& widths);
+    static void printLoadingAnimation(const string &message);
+    static void printProgressBar(int current, int total, const string &prefix = "Progress");
+    static bool confirmAction(const string &message);
+    static void printTableHeader(const vector<string> &headers, const vector<int> &widths);
+    static void printTableRow(const vector<string> &data, const vector<int> &widths);
 };
 
 #endif // STRUCTURE_UTILS_H

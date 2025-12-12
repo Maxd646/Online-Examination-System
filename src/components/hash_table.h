@@ -4,6 +4,10 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <algorithm>
+#include <stdexcept>
+
+using namespace std;
 
 template<typename K, typename V>
 class HashTable {
@@ -23,7 +27,7 @@ private:
     double maxLoadFactor;
     
     size_t hash(const K& key) const {
-        return hash<K>{}(key) % capacity;
+        return std::hash<K>{}(key) % capacity;
     }
     
     size_t probe(size_t index) const {

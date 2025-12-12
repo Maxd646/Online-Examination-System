@@ -1,8 +1,10 @@
 #include "utils.h"
 #include <iostream>
 #include <iomanip>
+#include <cstdlib>
 #ifdef _WIN32
-#include <windows.h>
+#include <thread>
+#include <chrono>
 #else
 #include <unistd.h>
 #endif
@@ -11,29 +13,29 @@ using namespace std;
 void Utils::printWelcomeMessage()
 {
     clearScreen();
-    cout << R"(
-    ╔══════════════════════════════════════════════════════════════╗
-    ║                                                              ║
-    ║              ONLINE EXAMINATION SYSTEM                       ║
-    ║                                                              ║
-    ║              Advanced C++ with DSA Implementation            ║
-    ║                                                              ║
-    ╚══════════════════════════════════════════════════════════════╝
-    )" << endl;
+    cout << "\n";
+    cout << "    +==============================================================+" << endl;
+    cout << "    |                                                              |" << endl;
+    cout << "    |              ONLINE EXAMINATION SYSTEM                       |" << endl;
+    cout << "    |                                                              |" << endl;
+    cout << "    |              Advanced C++ with DSA Implementation            |" << endl;
+    cout << "    |                                                              |" << endl;
+    cout << "    +==============================================================+" << endl;
+    cout << endl;
 }
 
 void Utils::printGoodbye()
 {
     clearScreen();
-    cout << R"(
-    ╔══════════════════════════════════════════════════════════════╗
-    ║                                                              ║
-    ║                    Thank You!                                ║
-    ║                                                              ║
-    ║            For using Online Examination System               ║
-    ║                                                              ║
-    ╚══════════════════════════════════════════════════════════════╝
-    )" << endl;
+    cout << "\n";
+    cout << "    +==============================================================+" << endl;
+    cout << "    |                                                              |" << endl;
+    cout << "    |                    Thank You!                                |" << endl;
+    cout << "    |                                                              |" << endl;
+    cout << "    |            For using Online Examination System               |" << endl;
+    cout << "    |                                                              |" << endl;
+    cout << "    +==============================================================+" << endl;
+    cout << endl;
 }
 
 void Utils::printLoadingAnimation(const string &message)
@@ -44,7 +46,7 @@ void Utils::printLoadingAnimation(const string &message)
         cout << ".";
         cout.flush();
 #ifdef _WIN32
-        Sleep(500);
+        this_thread::sleep_for(chrono::milliseconds(500));
 #else
         usleep(500000);
 #endif
@@ -62,7 +64,7 @@ void Utils::printProgressBar(int current, int total, const string &prefix)
     for (int i = 0; i < barWidth; ++i)
     {
         if (i < pos)
-            cout << "█";
+            cout << "#";
         else if (i == pos)
             cout << ">";
         else

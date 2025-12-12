@@ -4,196 +4,244 @@
 #include <vector>
 #include <stdexcept>
 
-template<typename T>
-class Queue {
+template <typename T>
+class Queue
+{
 private:
     vector<T> data;
     size_t frontIndex;
-    
+
 public:
-    Queue() : frontIndex(0) {}
-    
-    void push(const T& value) {
+    Queue()
+    {
+        frontIndex = 0;
+    }
+
+    void push(const T &value)
+    {
         data.push_back(value);
     }
-    
-    void pop() {
-        if (empty()) {
+
+    void pop()
+    {
+        if (empty())
+        {
             throw runtime_error("Queue is empty");
         }
-        
+
         frontIndex++;
-        
-        // Optimize memory usage - remove processed elements when queue gets large
-        if (frontIndex > data.size() / 2 && frontIndex > 100) {
+
+        if (frontIndex > data.size() / 2 && frontIndex > 100)
+        {
             data.erase(data.begin(), data.begin() + frontIndex);
             frontIndex = 0;
         }
     }
-    
-    T& front() {
-        if (empty()) {
+
+    T &front()
+    {
+        if (empty())
+        {
             throw runtime_error("Queue is empty");
         }
         return data[frontIndex];
     }
-    
-    const T& front() const {
-        if (empty()) {
+
+    const T &front() const
+    {
+        if (empty())
+        {
             throw runtime_error("Queue is empty");
         }
         return data[frontIndex];
     }
-    
-    T& back() {
-        if (empty()) {
+
+    T &back()
+    {
+        if (empty())
+        {
             throw runtime_error("Queue is empty");
         }
         return data.back();
     }
-    
-    const T& back() const {
-        if (empty()) {
+
+    const T &back() const
+    {
+        if (empty())
+        {
             throw runtime_error("Queue is empty");
         }
         return data.back();
     }
-    
-    bool empty() const {
+
+    bool empty() const
+    {
         return frontIndex >= data.size();
     }
-    
-    size_t size() const {
+
+    size_t size() const
+    {
         return data.size() - frontIndex;
     }
-    
-    void clear() {
+
+    void clear()
+    {
         data.clear();
         frontIndex = 0;
     }
-    
+
     // Advanced operations
-    void display() const {
+    void display() const
+    {
         cout << "Queue: [";
-        for (size_t i = frontIndex; i < data.size(); ++i) {
+        for (size_t i = frontIndex; i < data.size(); ++i)
+        {
             cout << data[i];
-            if (i < data.size() - 1) cout << ", ";
+            if (i < data.size() - 1)
+                cout << ", ";
         }
         cout << "]" << endl;
     }
-    
+
     // Peek at element at specific position from front
-    const T& peek(size_t position = 0) const {
-        if (frontIndex + position >= data.size()) {
+    const T &peek(size_t position = 0) const
+    {
+        if (frontIndex + position >= data.size())
+        {
             throw out_of_range("Position out of range");
         }
         return data[frontIndex + position];
     }
-    
+
     // Check if queue contains a specific value
-    bool contains(const T& value) const {
-        for (size_t i = frontIndex; i < data.size(); ++i) {
-            if (data[i] == value) {
+    bool contains(const T &value) const
+    {
+        for (size_t i = frontIndex; i < data.size(); ++i)
+        {
+            if (data[i] == value)
+            {
                 return true;
             }
         }
         return false;
     }
-    
+
     // Get all elements as vector (for iteration)
-    vector<T> toVector() const {
+    vector<T> toVector() const
+    {
         return vector<T>(data.begin() + frontIndex, data.end());
     }
 };
 
 // Priority Queue implementation
-template<typename T, typename Compare = less<T>>
-class PriorityQueue {
+template <typename T, typename Compare = less<T>>
+class PriorityQueue
+{
 private:
     vector<T> heap;
     Compare comp;
-    
-    void heapifyUp(size_t index) {
-        while (index > 0) {
+
+    void heapifyUp(size_t index)
+    {
+        while (index > 0)
+        {
             size_t parent = (index - 1) / 2;
-            if (!comp(heap[index], heap[parent])) {
+            if (!comp(heap[index], heap[parent]))
+            {
                 break;
             }
             swap(heap[index], heap[parent]);
             index = parent;
         }
     }
-    
-    void heapifyDown(size_t index) {
+
+    void heapifyDown(size_t index)
+    {
         size_t size = heap.size();
-        
-        while (true) {
+
+        while (true)
+        {
             size_t smallest = index;
             size_t left = 2 * index + 1;
             size_t right = 2 * index + 2;
-            
-            if (left < size && comp(heap[left], heap[smallest])) {
+
+            if (left < size && comp(heap[left], heap[smallest]))
+            {
                 smallest = left;
             }
-            
-            if (right < size && comp(heap[right], heap[smallest])) {
+
+            if (right < size && comp(heap[right], heap[smallest]))
+            {
                 smallest = right;
             }
-            
-            if (smallest == index) {
+
+            if (smallest == index)
+            {
                 break;
             }
-            
+
             swap(heap[index], heap[smallest]);
             index = smallest;
         }
     }
-    
+
 public:
     PriorityQueue() {}
-    
-    void push(const T& value) {
+
+    void push(const T &value)
+    {
         heap.push_back(value);
         heapifyUp(heap.size() - 1);
     }
-    
-    void pop() {
-        if (empty()) {
+
+    void pop()
+    {
+        if (empty())
+        {
             throw runtime_error("Priority queue is empty");
         }
-        
+
         heap[0] = heap.back();
         heap.pop_back();
-        
-        if (!empty()) {
+
+        if (!empty())
+        {
             heapifyDown(0);
         }
     }
-    
-    const T& top() const {
-        if (empty()) {
+
+    const T &top() const
+    {
+        if (empty())
+        {
             throw runtime_error("Priority queue is empty");
         }
         return heap[0];
     }
-    
-    bool empty() const {
+
+    bool empty() const
+    {
         return heap.empty();
     }
-    
-    size_t size() const {
+
+    size_t size() const
+    {
         return heap.size();
     }
-    
-    void clear() {
+
+    void clear()
+    {
         heap.clear();
     }
-    
-    void display() const {
+
+    void display() const
+    {
         cout << "Priority Queue: [";
-        for (size_t i = 0; i < heap.size(); ++i) {
+        for (size_t i = 0; i < heap.size(); ++i)
+        {
             cout << heap[i];
-            if (i < heap.size() - 1) cout << ", ";
+            if (i < heap.size() - 1)
+                cout << ", ";
         }
         cout << "]" << endl;
     }

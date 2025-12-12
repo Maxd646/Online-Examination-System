@@ -246,18 +246,26 @@ bool DatabaseManager::insertUser(const User &user)
     )";
 
     sqlite3_stmt *stmt = prepareStatement(sql);
-    if (!stmt)
+    if (!stmt) {
+        logError("insertUser", "Failed to prepare statement");
         return false;
+    }
 
-    sqlite3_bind_text(stmt, 1, user.getUsername().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, user.getPassword().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 3, user.getEmail().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 4, user.getFullName().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, user.getUsername().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, user.getPassword().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, user.getEmail().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 4, user.getFullName().c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 5, static_cast<int>(user.getRole()));
     sqlite3_bind_int(stmt, 6, static_cast<int>(user.getStatus()));
-    sqlite3_bind_text(stmt, 7, Utils::getCurrentDateTime().c_str(), -1, SQLITE_STATIC);
+    string currentTime = Utils::getCurrentDateTime();
+    sqlite3_bind_text(stmt, 7, currentTime.c_str(), -1, SQLITE_TRANSIENT);
 
     int result = sqlite3_step(stmt);
+    
+    if (result != SQLITE_DONE) {
+        logError("insertUser", sqlite3_errmsg(db));
+    }
+    
     finalizeStatement(stmt);
 
     return result == SQLITE_DONE;
@@ -275,13 +283,13 @@ bool DatabaseManager::updateUser(const User &user)
     if (!stmt)
         return false;
 
-    sqlite3_bind_text(stmt, 1, user.getUsername().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, user.getPassword().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 3, user.getEmail().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 4, user.getFullName().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, user.getUsername().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, user.getPassword().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, user.getEmail().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 4, user.getFullName().c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 5, static_cast<int>(user.getRole()));
     sqlite3_bind_int(stmt, 6, static_cast<int>(user.getStatus()));
-    sqlite3_bind_text(stmt, 7, user.getLastLogin().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 7, user.getLastLogin().c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 8, user.getLoginAttempts());
     sqlite3_bind_int(stmt, 9, user.getIsLocked() ? 1 : 0);
     sqlite3_bind_int(stmt, 10, user.getId());
@@ -294,10 +302,15 @@ bool DatabaseManager::updateUser(const User &user)
 
 User DatabaseManager::getUserByUsername(const string &username)
 {
+    // Return empty user if username is empty
+    if (username.empty()) {
+        return User();
+    }
+    
     const char *sql = R"(
         SELECT id, username, password, email, full_name, role, status, created_at, 
                last_login, login_attempts, is_locked 
-        FROM users WHERE username = ?;
+        FROM users WHERE username = ? AND username != '';
     )";
 
     sqlite3_stmt *stmt = prepareStatement(sql);
@@ -305,15 +318,22 @@ User DatabaseManager::getUserByUsername(const string &username)
 
     if (stmt)
     {
-        sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 1, username.c_str(), -1, SQLITE_TRANSIENT);
 
         if (sqlite3_step(stmt) == SQLITE_ROW)
         {
             user.setId(sqlite3_column_int(stmt, 0));
-            user.setUsername(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1)));
-            user.setPassword(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
-            user.setEmail(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)));
-            user.setFullName(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4)));
+            
+            const char* usernamePtr = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+            const char* passwordPtr = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+            const char* emailPtr = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
+            const char* fullNamePtr = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4));
+            
+            if (usernamePtr) user.setUsername(usernamePtr);
+            if (passwordPtr) user.setPassword(passwordPtr);
+            if (emailPtr) user.setEmail(emailPtr);
+            if (fullNamePtr) user.setFullName(fullNamePtr);
+            
             user.setRole(static_cast<UserRole>(sqlite3_column_int(stmt, 5)));
             user.setStatus(static_cast<UserStatus>(sqlite3_column_int(stmt, 6)));
 
@@ -408,22 +428,40 @@ bool DatabaseManager::insertQuestion(const Question &question)
 
     sqlite3_stmt *stmt = prepareStatement(sql);
     if (!stmt)
+    {
+        logError("insertQuestion", "Failed to prepare statement");
         return false;
+    }
 
     auto options = question.getOptions();
 
-    sqlite3_bind_text(stmt, 1, question.getSubject().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, question.getQuestionText().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 3, options[0].c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 4, options[1].c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 5, options[2].c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 6, options[3].c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, question.getSubject().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, question.getQuestionText().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, options[0].c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 4, options[1].c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 5, options[2].c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 6, options[3].c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 7, question.getCorrectAnswer());
-    sqlite3_bind_text(stmt, 8, question.getDifficulty().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 9, question.getExplanation().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, 10, question.getCreatedBy());
+    sqlite3_bind_text(stmt, 8, question.getDifficulty().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 9, question.getExplanation().c_str(), -1, SQLITE_TRANSIENT);
+    
+    // Handle created_by field - use NULL if 0
+    if (question.getCreatedBy() > 0)
+    {
+        sqlite3_bind_int(stmt, 10, question.getCreatedBy());
+    }
+    else
+    {
+        sqlite3_bind_null(stmt, 10);
+    }
 
     int result = sqlite3_step(stmt);
+    
+    if (result != SQLITE_DONE)
+    {
+        logError("insertQuestion", sqlite3_errmsg(db));
+    }
+    
     finalizeStatement(stmt);
 
     return result == SQLITE_DONE;
@@ -434,7 +472,7 @@ vector<Question> DatabaseManager::getAllQuestions()
     vector<Question> questions;
     const char *sql = R"(
         SELECT id, subject, question_text, option1, option2, option3, option4, 
-               correct_answer, difficulty, explanation, created_at, updated_at, created_by, is_active
+               correct_answer, difficulty, explanation, created_by, is_active
         FROM questions WHERE is_active = 1 ORDER BY id;
     )";
 
@@ -464,8 +502,11 @@ vector<Question> DatabaseManager::getAllQuestions()
                 question.setExplanation(explanation);
             }
 
-            question.setCreatedBy(sqlite3_column_int(stmt, 12));
-            question.setIsActive(sqlite3_column_int(stmt, 13) == 1);
+            const char *createdBy = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 10));
+            if (createdBy) {
+                question.setCreatedBy(sqlite3_column_int(stmt, 10));
+            }
+            question.setIsActive(sqlite3_column_int(stmt, 11) == 1);
 
             questions.push_back(question);
         }
@@ -480,7 +521,7 @@ vector<Question> DatabaseManager::getRandomQuestions(int count, const string &su
 {
     string sql = R"(
         SELECT id, subject, question_text, option1, option2, option3, option4, 
-               correct_answer, difficulty, explanation, created_at, updated_at, created_by, is_active
+               correct_answer, difficulty, explanation, is_active
         FROM questions WHERE is_active = 1
     )";
 
@@ -511,6 +552,13 @@ vector<Question> DatabaseManager::getRandomQuestions(int count, const string &su
             question.setOptions(options);
             question.setCorrectAnswer(sqlite3_column_int(stmt, 7));
             question.setDifficulty(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 8)));
+            
+            const char* explanation = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9));
+            if (explanation) {
+                question.setExplanation(explanation);
+            }
+            
+            question.setIsActive(sqlite3_column_int(stmt, 10) == 1);
 
             questions.push_back(question);
         }
@@ -534,16 +582,16 @@ bool DatabaseManager::insertExamResult(const ExamResult &result)
         return false;
 
     sqlite3_bind_int(stmt, 1, result.getUserId());
-    sqlite3_bind_text(stmt, 2, result.getUsername().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, result.getUsername().c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 3, result.getScore());
     sqlite3_bind_int(stmt, 4, result.getTotalQuestions());
     sqlite3_bind_double(stmt, 5, result.getPercentage());
-    sqlite3_bind_text(stmt, 6, result.getExamDate().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 7, result.getStartTime().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 8, result.getEndTime().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 6, result.getExamDate().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 7, result.getStartTime().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 8, result.getEndTime().c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 9, result.getDuration());
-    sqlite3_bind_text(stmt, 10, result.getSubject().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 11, result.getDifficulty().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 10, result.getSubject().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 11, result.getDifficulty().c_str(), -1, SQLITE_TRANSIENT);
 
     int res = sqlite3_step(stmt);
     finalizeStatement(stmt);
@@ -739,7 +787,7 @@ ExamResult::ExamResult() : id(0), userId(0), score(0), totalQuestions(0),
 ExamResult::ExamResult(int userId, const string &username, int score, int totalQuestions,
                        const string &subject, const string &difficulty)
     : id(0), userId(userId), username(username), score(score), totalQuestions(totalQuestions),
-      subject(subject), difficulty(difficulty), duration(0)
+      duration(0), subject(subject), difficulty(difficulty)
 {
     examDate = Utils::getCurrentDateTime();
     calculatePercentage();
@@ -914,15 +962,15 @@ bool DatabaseManager::updateQuestion(const Question &question)
     if (stmt)
     {
         auto options = question.getOptions();
-        sqlite3_bind_text(stmt, 1, question.getSubject().c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 2, question.getQuestionText().c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 3, options[0].c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 4, options[1].c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 5, options[2].c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 6, options[3].c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 1, question.getSubject().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, question.getQuestionText().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, options[0].c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, options[1].c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 5, options[2].c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 6, options[3].c_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_int(stmt, 7, question.getCorrectAnswer());
-        sqlite3_bind_text(stmt, 8, question.getDifficulty().c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 9, question.getExplanation().c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 8, question.getDifficulty().c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 9, question.getExplanation().c_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_int(stmt, 10, question.getIsActive() ? 1 : 0);
         sqlite3_bind_int(stmt, 11, question.getId());
 
@@ -967,7 +1015,7 @@ vector<Question> DatabaseManager::getQuestionsBySubject(const string &subject)
 
     if (stmt)
     {
-        sqlite3_bind_text(stmt, 1, subject.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 1, subject.c_str(), -1, SQLITE_TRANSIENT);
 
         while (sqlite3_step(stmt) == SQLITE_ROW)
         {
@@ -1014,7 +1062,7 @@ vector<Question> DatabaseManager::getQuestionsByDifficulty(const string &difficu
 
     if (stmt)
     {
-        sqlite3_bind_text(stmt, 1, difficulty.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 1, difficulty.c_str(), -1, SQLITE_TRANSIENT);
 
         while (sqlite3_step(stmt) == SQLITE_ROW)
         {
@@ -1064,9 +1112,9 @@ vector<Question> DatabaseManager::searchQuestions(const string &keyword)
     if (stmt)
     {
         string searchPattern = "%" + keyword + "%";
-        sqlite3_bind_text(stmt, 1, searchPattern.c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 2, searchPattern.c_str(), -1, SQLITE_STATIC);
-        sqlite3_bind_text(stmt, 3, searchPattern.c_str(), -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 1, searchPattern.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, searchPattern.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, searchPattern.c_str(), -1, SQLITE_TRANSIENT);
 
         while (sqlite3_step(stmt) == SQLITE_ROW)
         {
