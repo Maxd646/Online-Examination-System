@@ -34,7 +34,6 @@ public:
     {
         clear();
     }
-
     // Copy constructor
     LinkedList(const LinkedList &other) : head(nullptr), tail(nullptr), size(0)
     {
@@ -243,10 +242,10 @@ public:
 
         while (current)
         {
-            Node *next = current->next;
+            Node *temp = current->next;
             current->next = prev;
             prev = current;
-            current = next;
+            current = temp;
         }
 
         head = prev;
