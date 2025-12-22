@@ -92,14 +92,6 @@ public:
         return result;
     }
 
-    template <typename T>
-    static void shuffleVector(vector<T> &vec)
-    {
-        random_device rd;
-        mt19937 g(rd());
-        shuffle(vec.begin(), vec.end(), g);
-    }
-
     static double calculatePercentage(int score, int total)
     {
         if (total == 0)
@@ -116,38 +108,8 @@ public:
         cout << border << endl;
     }
 
-    static void printBrightHeader(const string &title)
-    {
-        cout << "\n";
-        cout << "+" << string(48, '=') << "+" << endl;
-        cout << "|" << setw(24 + title.length() / 2) << title 
-             << setw(24 - title.length() / 2) << "|" << endl;
-        cout << "+" << string(48, '=') << "+" << endl;
-    }
-
-    static void printColoredText(const string &text, const string &color = "white")
-    {
-        // Simple text output - colors can be added later if needed
-        (void)color; // Suppress unused parameter warning
-        cout << text;
-    }
-
-    static void printSubHeader(const string &subtitle)
-    {
-        string border(40, '-');
-        cout << "\n"
-             << border << endl;
-        cout << subtitle << endl;
-        cout << border << endl;
-    }
-
     static void printWelcomeMessage();
     static void printGoodbye();
-    static void printLoadingAnimation(const string &message);
-    static void printProgressBar(int current, int total, const string &prefix = "Progress");
-    static bool confirmAction(const string &message);
-    static void printTableHeader(const vector<string> &headers, const vector<int> &widths);
-    static void printTableRow(const vector<string> &data, const vector<int> &widths);
 };
 
 #endif // STRUCTURE_UTILS_H

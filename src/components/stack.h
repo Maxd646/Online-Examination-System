@@ -4,6 +4,8 @@
 #include <vector>
 #include <stdexcept>
 
+using namespace std;
+
 template<typename T>
 class Stack {
 private:
@@ -47,82 +49,6 @@ public:
     
     void clear() {
         data.clear();
-    }
-    
-    // Advanced operations
-    void display() const {
-        cout << "Stack (top to bottom): [";
-        for (int i = data.size() - 1; i >= 0; --i) {
-            cout << data[i];
-            if (i > 0) cout << ", ";
-        }
-        cout << "]" << endl;
-    }
-    
-    // Peek at element at specific position from top
-    const T& peek(size_t position = 0) const {
-        if (position >= data.size()) {
-            throw out_of_range("Position out of range");
-        }
-        return data[data.size() - 1 - position];
-    }
-    
-    // Check if stack contains a specific value
-    bool contains(const T& value) const {
-        for (const auto& item : data) {
-            if (item == value) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    // Get all elements as vector (bottom to top order)
-    vector<T> toVector() const {
-        return data;
-    }
-    
-    // Get all elements in reverse order (top to bottom)
-    vector<T> toVectorReverse() const {
-        vector<T> result;
-        for (int i = data.size() - 1; i >= 0; --i) {
-            result.push_back(data[i]);
-        }
-        return result;
-    }
-    
-    // Swap top two elements
-    void swapTop() {
-        if (size() < 2) {
-            throw runtime_error("Stack must have at least 2 elements to swap");
-        }
-        swap(data[data.size() - 1], data[data.size() - 2]);
-    }
-    
-    // Duplicate top element
-    void duplicate() {
-        if (empty()) {
-            throw runtime_error("Cannot duplicate from empty stack");
-        }
-        push(top());
-    }
-    
-    // Rotate stack (move top element to bottom)
-    void rotate() {
-        if (size() <= 1) return;
-        
-        T topElement = top();
-        pop();
-        data.insert(data.begin(), topElement);
-    }
-    
-    // Reverse rotate (move bottom element to top)
-    void reverseRotate() {
-        if (size() <= 1) return;
-        
-        T bottomElement = data[0];
-        data.erase(data.begin());
-        push(bottomElement);
     }
 };
 
@@ -180,11 +106,6 @@ public:
     
     size_t redoSize() const {
         return redoStack.size();
-    }
-    
-    void displayStatus() const {
-        cout << "Undo operations available: " << undoSize() << endl;
-        cout << "Redo operations available: " << redoSize() << endl;
     }
 };
 

@@ -34,9 +34,7 @@ private:
         return (index + 1) % capacity;
     }
     
-    size_t quadraticProbe(size_t index, size_t attempt) const {
-        return (index + attempt * attempt) % capacity;
-    }
+
     
     void resize() {
         vector<Entry> oldTable = table;
@@ -189,19 +187,8 @@ public:
         size = 0;
     }
     
-    // Get all keys
-    vector<K> getKeys() const {
-        vector<K> keys;
-        for (const auto& entry : table) {
-            if (entry.occupied && !entry.deleted) {
-                keys.push_back(entry.key);
-            }
-        }
-        return keys;
-    }
-    
-    // Get all values
-    vector<V> getValues() const {
+    // Get all values for cleanup purposes
+    vector<V> getAllValues() const {
         vector<V> values;
         for (const auto& entry : table) {
             if (entry.occupied && !entry.deleted) {
@@ -209,94 +196,6 @@ public:
             }
         }
         return values;
-    }
-    
-    // Get all key-value pairs
-    vector<pair<K, V>> getEntries() const {
-        vector<pair<K, V>> entries;
-        for (const auto& entry : table) {
-            if (entry.occupied && !entry.deleted) {
-                entries.push_back({entry.key, entry.value});
-            }
-        }
-        return entries;
-    }
-    
-    void display() const {
-        cout << "Hash Table (size: " << size << ", capacity: " << capacity 
-                  << ", load factor: " << getLoadFactor() << "):" << endl;
-        
-        for (size_t i = 0; i < capacity; ++i) {
-            cout << "[" << i << "] ";
-            if (table[i].occupied && !table[i].deleted) {
-                cout << table[i].key << " -> " << table[i].value;
-            } else if (table[i].deleted) {
-                cout << "(deleted)";
-            } else {
-                cout << "(empty)";
-            }
-            cout << endl;
-        }
-    }
-    
-    // Statistics
-    void printStatistics() const {
-        cout << "Hash Table Statistics:" << endl;
-        cout << "Size: " << size << endl;
-        cout << "Capacity: " << capacity << endl;
-        cout << "Load Factor: " << getLoadFactor() << endl;
-        cout << "Max Load Factor: " << maxLoadFactor << endl;
-        
-        // Count collisions
-        size_t collisions = 0;
-        for (size_t i = 0; i < capacity; ++i) {
-            if (table[i].occupied && !table[i].deleted) {
-                if (hash(table[i].key) != i) {
-                    collisions++;
-                }
-            }
-        }
-        cout << "Collisions: " << collisions << endl;
-    }
-};
-
-// Specialized hash table for string keys with case-insensitive comparison
-class CaseInsensitiveHashTable {
-private:
-    HashTable<string, string> table;
-    
-    string toLower(const string& str) const {
-        string result = str;
-        transform(result.begin(), result.end(), result.begin(), ::tolower);
-        return result;
-    }
-    
-public:
-    CaseInsensitiveHashTable(size_t initialCapacity = 16) : table(initialCapacity) {}
-    
-    void insert(const string& key, const string& value) {
-        table.insert(toLower(key), value);
-    }
-    
-    string* find(const string& key) {
-        return table.find(toLower(key));
-    }
-    
-    bool remove(const string& key) {
-        return table.remove(toLower(key));
-    }
-    
-    bool contains(const string& key) const {
-        return table.contains(toLower(key));
-    }
-    
-    size_t getSize() const { return table.getSize(); }
-    bool empty() const { return table.empty(); }
-    void clear() { table.clear(); }
-    
-    void display() const {
-        cout << "Case-Insensitive ";
-        table.display();
     }
 };
 

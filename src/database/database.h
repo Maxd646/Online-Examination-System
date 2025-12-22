@@ -9,6 +9,8 @@
 // Forward declarations
 class Question;
 class ExamResult;
+class ExamTemplate;
+class ExamQuestion;
 
 // Database connection and management
 class DatabaseManager {
@@ -24,6 +26,9 @@ private:
     
     // Prepared statements cache
     HashTable<string, sqlite3_stmt*> preparedStatements;
+    
+    // Last inserted IDs for retrieval
+    int lastInsertedExamTemplateId;
     
 public:
     DatabaseManager(const string& databasePath = "database/exam.db");
@@ -72,6 +77,27 @@ public:
     vector<ExamResult> getExamResultsByUser(int userId);
     vector<ExamResult> getAllExamResults();
     vector<ExamResult> getExamResultsByDateRange(const string& startDate, const string& endDate);
+    
+    // Exam template operations
+    bool insertExamTemplate(const ExamTemplate& examTemplate);
+    int getLastInsertedExamTemplateId() const { return lastInsertedExamTemplateId; }
+    bool updateExamTemplate(const ExamTemplate& examTemplate);
+    bool deleteExamTemplate(int templateId);
+    ExamTemplate getExamTemplateById(int templateId);
+    vector<ExamTemplate> getAllExamTemplates();
+    vector<ExamTemplate> getExamTemplatesByType(const string& examType);
+    vector<ExamTemplate> getExamTemplatesBySubject(const string& subject);
+    vector<ExamTemplate> getActiveExamTemplates();
+    bool activateExamTemplate(int templateId);
+    bool deactivateExamTemplate(int templateId);
+    
+    // Exam question operations (for direct exam creation)
+    bool insertExamQuestion(const ExamQuestion& question);
+    bool updateExamQuestion(const ExamQuestion& question);
+    bool deleteExamQuestion(int questionId);
+    vector<ExamQuestion> getExamQuestions(int examTemplateId);
+    ExamQuestion getExamQuestionById(int questionId);
+    int getExamQuestionCount(int examTemplateId);
     
     // Statistics and analytics
     int getTotalUsers();
@@ -195,6 +221,11 @@ private:
     int duration; // in minutes
     string subject;
     string difficulty;
+    string examType; // Quiz, Worksheet, Final
+    string templateName; // Name of the template used
+    int timeLimit; // Original time limit
+    bool negativeMarking; // Whether negative marking was used
+    double negativeMarks; // Negative marks deducted
     vector<int> questionIds;
     vector<int> userAnswers;
     vector<bool> correctAnswers;
@@ -217,6 +248,11 @@ public:
     int getDuration() const { return duration; }
     string getSubject() const { return subject; }
     string getDifficulty() const { return difficulty; }
+    string getExamType() const { return examType; }
+    string getTemplateName() const { return templateName; }
+    int getTimeLimit() const { return timeLimit; }
+    bool hasNegativeMarking() const { return negativeMarking; }
+    double getNegativeMarks() const { return negativeMarks; }
     vector<int> getQuestionIds() const { return questionIds; }
     vector<int> getUserAnswers() const { return userAnswers; }
     vector<bool> getCorrectAnswers() const { return correctAnswers; }
@@ -233,6 +269,11 @@ public:
     void setDuration(int duration) { this->duration = duration; }
     void setSubject(const string& subject) { this->subject = subject; }
     void setDifficulty(const string& difficulty) { this->difficulty = difficulty; }
+    void setExamType(const string& examType) { this->examType = examType; }
+    void setTemplateName(const string& templateName) { this->templateName = templateName; }
+    void setTimeLimit(int timeLimit) { this->timeLimit = timeLimit; }
+    void setNegativeMarking(bool negativeMarking) { this->negativeMarking = negativeMarking; }
+    void setNegativeMarks(double negativeMarks) { this->negativeMarks = negativeMarks; }
     void setQuestionIds(const vector<int>& questionIds) { this->questionIds = questionIds; }
     void setUserAnswers(const vector<int>& userAnswers) { this->userAnswers = userAnswers; }
     void setCorrectAnswers(const vector<bool>& correctAnswers) { this->correctAnswers = correctAnswers; }

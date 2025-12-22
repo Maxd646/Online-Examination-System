@@ -59,7 +59,6 @@ private:
         // Bright main menu
         cout << "\n+" << string(58, '=') << "+" << endl;
         cout << "|" << setw(35) << "ONLINE EXAMINATION SYSTEM" << setw(23) << "|" << endl;
-        cout << "|" << setw(35) << "Advanced C++ with DSA" << setw(23) << "|" << endl;
         cout << "+" << string(58, '=') << "+" << endl;
 
         cout << " 1. Login" << endl;
@@ -111,7 +110,7 @@ private:
         if (dbManager->authenticateUser(username, password, dbUser))
         {
             // Successful authentication
-            cout << "\n✓ Login successful! Welcome " << dbUser.getFullName() << endl;
+            cout << "\n Login successful! Welcome " << dbUser.getFullName() << endl;
             cout << "Role: " << dbUser.roleToString() << endl;
 
             // Add/update user in memory for auth manager
@@ -138,15 +137,15 @@ private:
             User checkUser = dbManager->getUserByUsername(username);
             if (checkUser.getId() == 0)
             {
-                cout << "\n✗ Login failed: User not found" << endl;
+                cout << "\n Login failed: User not found" << endl;
             }
             else if (checkUser.isAccountLocked())
             {
-                cout << "\n✗ Login failed: Account is locked due to too many failed attempts" << endl;
+                cout << "\n Login failed: Account is locked due to too many failed attempts" << endl;
             }
             else
             {
-                cout << "\n✗ Login failed: Invalid password" << endl;
+                cout << "\n Login failed: Invalid password" << endl;
             }
         }
 
@@ -187,7 +186,7 @@ private:
         User existingUser = dbManager->getUserByUsername(username);
         if (existingUser.getId() != 0)
         {
-            cout << "\n✗ Registration failed! Username already exists." << endl;
+            cout << "\n Registration failed! Username already exists." << endl;
             Utils::pauseSystem();
             return;
         }
@@ -200,20 +199,20 @@ private:
 
         if (dbManager->insertUser(newUser))
         {
-            cout << "\n✓ Registration successful!" << endl;
+            cout << "\n Registration successful!" << endl;
             cout << "Your account has been created and saved to database." << endl;
 
             // Verify the user was actually saved
             User dbUser = dbManager->getUserByUsername(username);
             if (dbUser.getId() != 0)
             {
-                cout << "✓ User verified in database with ID: " << dbUser.getId() << endl;
+                cout << " User verified in database with ID: " << dbUser.getId() << endl;
                 userManager->addUser(dbUser);
-                cout << "✓ User added to memory for immediate use" << endl;
+                cout << " User added to memory for immediate use" << endl;
             }
             else
             {
-                cout << "⚠ Warning: Could not retrieve user from database after insertion!" << endl;
+                cout << " Warning: Could not retrieve user from database after insertion!" << endl;
             }
 
             cout << "You can now login with your credentials." << endl;
@@ -224,7 +223,7 @@ private:
         }
         else
         {
-            cout << "\n✗ Registration failed!" << endl;
+            cout << "\n Registration failed!" << endl;
             cout << "Could not save user to database. Please try again." << endl;
             cout << "Please check that:" << endl;
             cout << "  - Username is unique" << endl;
