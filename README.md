@@ -24,7 +24,7 @@ A **fully functional** C++ examination system with advanced Data Structures & Al
 
 ### **Admin Panel**
 
-- **📝 Exam Template Management**
+- ** Exam Template Management**
 - Create Quiz, Worksheet, and Final exam templates
 - Set time limits and question counts for each exam type
 - Configure difficulty levels and passing percentages
@@ -47,55 +47,55 @@ A **fully functional** C++ examination system with advanced Data Structures & Al
 - View all student exam results
 - Performance tracking and analysis
 
-## 🎯 **ENHANCED EXAM SYSTEM**
+##  **ENHANCED EXAM SYSTEM**
 
 ### **Three Exam Types with Complete Answer Display**
 
-- **📝 QUIZ** - Quick assessments (10-20 questions, 15-30 minutes)
+- ** QUIZ** - Quick assessments (10-20 questions, 15-30 minutes)
   - Perfect for regular knowledge checks
   - Shorter time limits for focused testing
   - **Complete answers displayed after completion**
   - Available for ALL subjects including DSA, OOP, COA, SAM
 
-- **📄 WORKSHEET** - Practice exercises (20-30 questions, 30-60 minutes)  
+- ** WORKSHEET** - Practice exercises (20-30 questions, 30-60 minutes)  
   - Homework and practice sessions
   - Moderate time limits for thorough work
   - **Full answer review with explanations**
   - Available for ALL subjects with detailed solutions
 
-- **🎓 FINAL** - Comprehensive exams (40-100 questions, 90-180 minutes)
+- **FINAL** - Comprehensive exams (40-100 questions, 90-180 minutes)
   - Major assessments and certifications
   - Extended time for comprehensive evaluation
   - **Complete answer key provided after submission**
   - Available for ALL subjects with comprehensive review
 
 ### **All Exam Types Feature Complete Answer Display**
-✅ **Quiz** - Immediate answer review with explanations  
-✅ **Worksheet** - Complete solution analysis  
-✅ **Final** - Comprehensive answer key with detailed explanations  
+ **Quiz** - Immediate answer review with explanations  
+ **Worksheet** - Complete solution analysis  
+ **Final** - Comprehensive answer key with detailed explanations  
 
 ### **Computer Science Subjects Available for ALL Exam Types**
 
-- **📊 DSA** - Data Structures and Algorithms (Arrays, Trees, Sorting, Searching)
-- **🔧 OOP** - Object-Oriented Programming (Classes, Inheritance, Polymorphism)
-- **💻 COA** - Computer Organization and Architecture (CPU, Memory, Instructions)
-- **🏗️ SAM** - Software Architecture and Modeling (Design Patterns, UML)
-- **🗄️ Database Systems** - SQL, Normalization, Transactions
-- **⚙️ Operating Systems** - Processes, Memory Management, File Systems
-- **🌐 Computer Networks** - Protocols, OSI Model, TCP/IP
-- **📚 General Computer Science** - Algorithms, Programming Concepts
-- **🧮 Mathematics** - Mathematical concepts and problem solving
-- **🔬 Science** - General science topics
-- **🌍 General Knowledge** - Mixed topics and current affairs
+- ** DSA** - Data Structures and Algorithms (Arrays, Trees, Sorting, Searching)
+- ** OOP** - Object-Oriented Programming (Classes, Inheritance, Polymorphism)
+- ** COA** - Computer Organization and Architecture (CPU, Memory, Instructions)
+- ** SAM** - Software Architecture and Modeling (Design Patterns, UML)
+- ** Database Systems** - SQL, Normalization, Transactions
+- ** Operating Systems** - Processes, Memory Management, File Systems
+- ** Computer Networks** - Protocols, OSI Model, TCP/IP
+- ** General Computer Science** - Algorithms, Programming Concepts
+- ** Mathematics** - Mathematical concepts and problem solving
+- ** Science** - General science topics
+- ** General Knowledge** - Mixed topics and current affairs
 
 ### **Enhanced Answer Display Features**
 
-- **📋 Complete Question Review**: All questions with options displayed
-- **✅ Answer Marking**: Clear visual indicators for correct/incorrect answers
-- **💡 Detailed Explanations**: Educational explanations for better learning
-- **📊 Score Breakdown**: Point-by-point analysis of performance
-- **🎯 Correct Answer Highlighting**: Easy identification of right answers
-- **📝 Your Answer Display**: Clear showing of selected answers
+- ** Complete Question Review**: All questions with options displayed
+- **Answer Marking**: Clear visual indicators for correct/incorrect answers
+- ** Detailed Explanations**: Educational explanations for better learning
+- ** Score Breakdown**: Point-by-point analysis of performance
+- ** Correct Answer Highlighting**: Easy identification of right answers
+- ** Your Answer Display**: Clear showing of selected answers
 
 ### **Admin Template Management**
 
