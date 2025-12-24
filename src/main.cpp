@@ -20,7 +20,7 @@ public:
     SimpleExamSystem()
     {
         // Initialize components
-        dbManager = make_unique<DatabaseManager>("database/exam.db");
+        dbManager = make_unique<DatabaseManager>("../sql/exam.db");
         userManager = make_unique<UserManager>();
         authManager = make_unique<SimpleAuthManager>(userManager.get());
 
