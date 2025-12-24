@@ -791,8 +791,8 @@ bool DatabaseManager::insertExamResult(const ExamResult &result)
 {
     const char *sql = R"(
         INSERT INTO exam_results (user_id, username, score, total_questions, percentage, 
-                                exam_date, start_time, end_time, duration, subject, difficulty) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                                exam_date, start_time, end_time, duration, subject, exam_type, exam_name) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     )";
 
     sqlite3_stmt *stmt = prepareStatement(sql);
@@ -809,7 +809,8 @@ bool DatabaseManager::insertExamResult(const ExamResult &result)
     sqlite3_bind_text(stmt, 8, result.getEndTime().c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 9, result.getDuration());
     sqlite3_bind_text(stmt, 10, result.getSubject().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 11, result.getDifficulty().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 11, result.getExamType().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 12, result.getTemplateName().c_str(), -1, SQLITE_TRANSIENT);
 
     int res = sqlite3_step(stmt);
     finalizeStatement(stmt);
@@ -822,7 +823,7 @@ vector<ExamResult> DatabaseManager::getExamResultsByUser(int userId)
     vector<ExamResult> results;
     const char *sql = R"(
         SELECT id, user_id, username, score, total_questions, percentage, exam_date, 
-               start_time, end_time, duration, subject, difficulty
+               start_time, end_time, duration, subject, exam_type, exam_name
         FROM exam_results WHERE user_id = ? ORDER BY exam_date DESC;
     )";
 
@@ -840,12 +841,14 @@ vector<ExamResult> DatabaseManager::getExamResultsByUser(int userId)
             result.setUsername(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
             result.setScore(sqlite3_column_int(stmt, 3));
             result.setTotalQuestions(sqlite3_column_int(stmt, 4));
+            // percentage is calculated automatically in setScore/setTotalQuestions
             result.setExamDate(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 6)));
 
             const char *startTime = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 7));
             const char *endTime = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 8));
             const char *subject = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 10));
-            const char *difficulty = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 11));
+            const char *examType = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 11));
+            const char *examName = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 12));
 
             if (startTime)
                 result.setStartTime(startTime);
@@ -853,8 +856,10 @@ vector<ExamResult> DatabaseManager::getExamResultsByUser(int userId)
                 result.setEndTime(endTime);
             if (subject)
                 result.setSubject(subject);
-            if (difficulty)
-                result.setDifficulty(difficulty);
+            if (examType)
+                result.setExamType(examType);
+            if (examName)
+                result.setTemplateName(examName);
 
             result.setDuration(sqlite3_column_int(stmt, 9));
 
@@ -974,16 +979,18 @@ void Question::display() const
     cout << "\nQ" << id << ". " << questionText << endl;
     cout << "Subject: " << subject << " | Difficulty: " << difficulty << endl;
 
+    char optionLabels[] = {'a', 'b', 'c', 'd'};
     for (size_t i = 0; i < options.size(); ++i)
     {
-        cout << (i + 1) << ". " << options[i] << endl;
+        cout << optionLabels[i] << ". " << options[i] << endl;
     }
 }
 
 void Question::displayWithAnswer() const
 {
     display();
-    cout << "Correct Answer: " << (correctAnswer + 1) << ". " << options[correctAnswer] << endl;
+    char optionLabels[] = {'a', 'b', 'c', 'd'};
+    cout << "Correct Answer: " << optionLabels[correctAnswer] << ". " << options[correctAnswer] << endl;
     if (!explanation.empty())
     {
         cout << "Explanation: " << explanation << endl;
@@ -1370,7 +1377,7 @@ vector<ExamResult> DatabaseManager::getAllExamResults()
 {
     const char *sql = R"(
         SELECT id, user_id, username, score, total_questions, percentage, 
-               exam_date, start_time, end_time, duration, subject, difficulty 
+               exam_date, start_time, end_time, duration, subject, exam_type, exam_name 
         FROM exam_results ORDER BY exam_date DESC;
     )";
 
@@ -1407,9 +1414,13 @@ vector<ExamResult> DatabaseManager::getAllExamResults()
             if (subject)
                 result.setSubject(subject);
 
-            const char *difficulty = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 11));
-            if (difficulty)
-                result.setDifficulty(difficulty);
+            const char *examType = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 11));
+            if (examType)
+                result.setExamType(examType);
+
+            const char *examName = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 12));
+            if (examName)
+                result.setTemplateName(examName);
 
             results.push_back(result);
         }

@@ -14,6 +14,8 @@
 #include <string>
 #include <map>
 #include <iomanip>
+#include <algorithm>
+#include <iomanip>
 
 // Enhanced AdminPanel with question management functionality
 class AdminPanel
@@ -119,7 +121,8 @@ private:
             cout << "3. Edit Exam" << endl;
             cout << "4. Delete Exam" << endl;
             cout << "5. Activate/Deactivate Exam" << endl;
-            cout << "6. Back to Main Menu" << endl;
+            cout << "6. View Exam Results" << endl;
+            cout << "7. Back to Main Menu" << endl;
 
             cout << "\nEnter your choice: ";
             int choice;
@@ -143,6 +146,9 @@ private:
                 toggleExamStatus();
                 break;
             case 6:
+                viewExamResults();
+                break;
+            case 7:
                 return;
             default:
                 cout << "Invalid choice!" << endl;
@@ -399,20 +405,27 @@ private:
 
         // Edit options
         auto options = question.getOptions();
+        char optionLabels[] = {'a', 'b', 'c', 'd'};
         for (int i = 0; i < 4; ++i)
         {
-            cout << "Option " << (i + 1) << " [" << options[i] << "]: ";
+            cout << " " << optionLabels[i] << " [" << options[i] << "]: ";
             getline(cin, input);
             if (!input.empty())
                 options[i] = input;
         }
         question.setOptions(options);
 
-        cout << "Correct Answer (1-4) [" << (question.getCorrectAnswer() + 1) << "]: ";
+        cout << "Correct Answer (a-d) [" << char('a' + question.getCorrectAnswer()) << "]: ";
         getline(cin, input);
         if (!input.empty())
         {
-            int correctAnswer = stoi(input) - 1; // Convert to 0-based
+            char c = tolower(input[0]);
+            int correctAnswer = -1;
+            if (c >= 'a' && c <= 'd') {
+                correctAnswer = c - 'a'; // Convert a-d to 0-3
+            } else if (c >= '1' && c <= '4') {
+                correctAnswer = c - '1'; // Convert 1-4 to 0-3
+            }
             if (correctAnswer >= 0 && correctAnswer <= 3)
             {
                 question.setCorrectAnswer(correctAnswer);
@@ -462,20 +475,27 @@ private:
 
         // Edit options
         auto options = question.getOptions();
+        char optionLabels[] = {'a', 'b', 'c', 'd'};
         for (int i = 0; i < 4; ++i)
         {
-            cout << "Option " << (i + 1) << " [" << options[i] << "]: ";
+            cout << "Option " << optionLabels[i] << " [" << options[i] << "]: ";
             getline(cin, input);
             if (!input.empty())
                 options[i] = input;
         }
         question.setOptions(options);
 
-        cout << "Correct Answer (1-4) [" << (question.getCorrectAnswer() + 1) << "]: ";
+        cout << "Correct Answer (a-d) [" << char('a' + question.getCorrectAnswer()) << "]: ";
         getline(cin, input);
         if (!input.empty())
         {
-            int correctAnswer = stoi(input) - 1; // Convert to 0-based
+            char c = tolower(input[0]);
+            int correctAnswer = -1;
+            if (c >= 'a' && c <= 'd') {
+                correctAnswer = c - 'a'; // Convert a-d to 0-3
+            } else if (c >= '1' && c <= '4') {
+                correctAnswer = c - '1'; // Convert 1-4 to 0-3
+            }
             if (correctAnswer >= 0 && correctAnswer <= 3)
             {
                 question.setCorrectAnswer(correctAnswer);
@@ -1162,7 +1182,6 @@ private:
         Utils::printHeader("ADD NEW QUESTION");
 
         string subject, questionText, option1, option2, option3, option4, difficulty, explanation;
-        int correctAnswer;
 
         cout << "Subject: ";
         cin.ignore();
@@ -1171,21 +1190,31 @@ private:
         cout << "Question Text: ";
         getline(cin, questionText);
 
-        cout << "Option 1: ";
+        cout << " a: ";
         getline(cin, option1);
 
-        cout << "Option 2: ";
+        cout << "b: ";
         getline(cin, option2);
 
-        cout << "Option 3: ";
+        cout << " c: ";
         getline(cin, option3);
 
-        cout << "Option 4: ";
+        cout << " d: ";
         getline(cin, option4);
 
-        cout << "Correct Answer (1-4): ";
-        cin >> correctAnswer;
-        correctAnswer--; // Convert to 0-based index
+        cout << "Correct Answer (a-d): ";
+        string correctAnswerInput;
+        cin >> correctAnswerInput;
+        
+        int correctAnswer = -1;
+        if (correctAnswerInput.length() == 1) {
+            char c = tolower(correctAnswerInput[0]);
+            if (c >= 'a' && c <= 'd') {
+                correctAnswer = c - 'a'; // Convert a-d to 0-3
+            } else if (c >= '1' && c <= '4') {
+                correctAnswer = c - '1'; // Convert 1-4 to 0-3
+            }
+        }
 
         cout << "Difficulty (Easy/Medium/Hard): ";
         cin >> difficulty;
@@ -1197,7 +1226,7 @@ private:
         // Validate input
         if (correctAnswer < 0 || correctAnswer > 3)
         {
-            cout << "\n Invalid correct answer! Must be between 1-4." << endl;
+            cout << "\n Invalid correct answer! Must be a-d." << endl;
             Utils::pauseSystem();
             return;
         }
@@ -1722,6 +1751,158 @@ private:
         }
 
         Utils::pauseSystem();
+    }
+
+    void viewExamResults()
+    {
+        Utils::clearScreen();
+        Utils::printHeader("VIEW EXAM RESULTS");
+
+        // First, show available exams
+        auto templates = dbManager->getAllExamTemplates();
+        if (templates.empty())
+        {
+            cout << "No exams found!" << endl;
+            cout << "Create an exam first to view results." << endl;
+            Utils::pauseSystem();
+            return;
+        }
+
+        cout << "Available Exams:" << endl;
+        cout << string(80, '=') << endl;
+        for (size_t i = 0; i < templates.size(); ++i)
+        {
+            cout << "[" << templates[i].getId() << "] " << templates[i].getTemplateName() << endl;
+            cout << "    Type: " << templates[i].getExamTypeString() << " | Subject: " << templates[i].getSubject() << endl;
+            cout << string(80, '-') << endl;
+        }
+
+        cout << "\nEnter Exam ID to view results (0 to cancel): ";
+        int examId;
+        cin >> examId;
+
+        if (examId == 0) return;
+
+        // Find the selected exam template
+        ExamTemplate selectedTemplate;
+        bool found = false;
+        for (const auto& tmpl : templates) {
+            if (tmpl.getId() == examId) {
+                selectedTemplate = tmpl;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            cout << "Invalid Exam ID!" << endl;
+            Utils::pauseSystem();
+            return;
+        }
+
+        // Get all exam results and filter by exam template
+        auto allResults = dbManager->getAllExamResults();
+        vector<ExamResult> examResults;
+        
+        for (const auto& result : allResults) {
+            if (result.getTemplateName() == selectedTemplate.getTemplateName()) {
+                examResults.push_back(result);
+            }
+        }
+
+        Utils::clearScreen();
+        Utils::printHeader("EXAM RESULTS - " + selectedTemplate.getTemplateName());
+
+        cout << "Exam Details:" << endl;
+        cout << string(80, '=') << endl;
+        cout << "Template: " << selectedTemplate.getTemplateName() << endl;
+        cout << "Type: " << selectedTemplate.getExamTypeString() << endl;
+        cout << "Subject: " << selectedTemplate.getSubject() << endl;
+        cout << "Time Limit: " << selectedTemplate.getTimeLimit() << " minutes" << endl;
+        cout << "Passing Score: " << selectedTemplate.getPassingPercentage() << "%" << endl;
+        cout << string(80, '=') << endl;
+
+        if (examResults.empty())
+        {
+            cout << "\nNo students have taken this exam yet." << endl;
+            cout << "Results will appear here once students complete the exam." << endl;
+        }
+        else
+        {
+            cout << "\nStudent Results (" << examResults.size() << " submissions):" << endl;
+            cout << string(100, '-') << endl;
+            cout << left << setw(15) << "Student" << setw(10) << "Score" << setw(12) << "Percentage" 
+                 << setw(8) << "Grade" << setw(8) << "Status" << setw(20) << "Date" << setw(10) << "Duration" << endl;
+            cout << string(100, '-') << endl;
+
+            // Calculate statistics
+            double totalPercentage = 0;
+            int passedCount = 0;
+            double highestScore = 0;
+            double lowestScore = 100;
+            string topStudent = "";
+
+            for (const auto &result : examResults)
+            {
+                double percentage = result.getPercentage();
+                totalPercentage += percentage;
+                
+                if (percentage >= selectedTemplate.getPassingPercentage()) {
+                    passedCount++;
+                }
+                
+                if (percentage > highestScore) {
+                    highestScore = percentage;
+                    topStudent = result.getUsername();
+                }
+                
+                if (percentage < lowestScore) {
+                    lowestScore = percentage;
+                }
+
+                string grade = getGradeFromPercentage(percentage);
+                string status = (percentage >= selectedTemplate.getPassingPercentage()) ? "PASS" : "FAIL";
+
+                cout << left << setw(15) << result.getUsername() 
+                     << setw(10) << (to_string(result.getScore()) + "/" + to_string(result.getTotalQuestions()))
+                     << setw(12) << (to_string((int)percentage) + "%")
+                     << setw(8) << grade
+                     << setw(8) << status
+                     << setw(20) << result.getExamDate().substr(0, 16)
+                     << setw(10) << (to_string(result.getDuration()) + "min") << endl;
+            }
+
+            cout << string(100, '-') << endl;
+
+            // Show statistics
+            cout << "\nExam Statistics:" << endl;
+            cout << string(50, '=') << endl;
+            cout << "Total Submissions: " << examResults.size() << endl;
+            cout << "Average Score: " << fixed << setprecision(1) << (totalPercentage / examResults.size()) << "%" << endl;
+            cout << "Pass Rate: " << fixed << setprecision(1) << ((double)passedCount / examResults.size() * 100) << "%" << endl;
+            cout << "Highest Score: " << fixed << setprecision(1) << highestScore << "% (" << topStudent << ")" << endl;
+            cout << "Lowest Score: " << fixed << setprecision(1) << lowestScore << "%" << endl;
+            cout << "Students Passed: " << passedCount << "/" << examResults.size() << endl;
+        }
+
+        Utils::pauseSystem();
+    }
+
+    // Helper function to get grade from percentage
+    string getGradeFromPercentage(double percentage) {
+        if (percentage >= 97) return "A+";      // 97-100%
+        else if (percentage >= 93) return "A";  // 93-96%
+        else if (percentage >= 90) return "A-"; // 90-92%
+        else if (percentage >= 87) return "B+"; // 87-89%
+        else if (percentage >= 83) return "B";  // 83-86%
+        else if (percentage >= 80) return "B-"; // 80-82%
+        else if (percentage >= 77) return "C+"; // 77-79%
+        else if (percentage >= 73) return "C";  // 73-76%
+        else if (percentage >= 70) return "C-"; // 70-72%
+        else if (percentage >= 67) return "D+"; // 67-69%
+        else if (percentage >= 63) return "D";  // 63-66%
+        else if (percentage >= 60) return "D-"; // 60-62%
+        else return "F";                         // Below 60%
     }
 };
 

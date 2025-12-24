@@ -69,7 +69,7 @@ public:
 
     void displayWithAnswer() const {
         display();
-        cout << "   Correct Answer: " << (correctAnswer + 1) << endl;
+        cout << "   Correct Answer: " << char('a' + correctAnswer) << endl;
         if (!explanation.empty()) {
             cout << "   Explanation: " << explanation << endl;
         }
@@ -260,8 +260,9 @@ private:
 
             // Get options
             vector<string> options(4);
+            char optionLabels[] = {'a', 'b', 'c', 'd'};
             for (int i = 0; i < 4; ++i) {
-                cout << "Option " << (i + 1) << ": ";
+                cout << "Option " << optionLabels[i] << ": ";
                 getline(cin, options[i]);
             }
             question.setOptions(options);
@@ -269,10 +270,25 @@ private:
             cout << endl; // Add space before correct answer
 
             // Get correct answer
-            int correctAnswer;
-            cout << "Correct Answer (1-4): ";
-            cin >> correctAnswer;
-            question.setCorrectAnswer(correctAnswer - 1); // Convert to 0-based
+            string correctAnswerInput;
+            cout << "Correct Answer (a-d): ";
+            cin >> correctAnswerInput;
+            
+            int correctAnswer = -1;
+            if (correctAnswerInput.length() == 1) {
+                char c = tolower(correctAnswerInput[0]);
+                if (c >= 'a' && c <= 'd') {
+                    correctAnswer = c - 'a'; // Convert a-d to 0-3
+                } else if (c >= '1' && c <= '4') {
+                    correctAnswer = c - '1'; // Convert 1-4 to 0-3
+                }
+            }
+            if (correctAnswer >= 0 && correctAnswer <= 3) {
+                question.setCorrectAnswer(correctAnswer);
+            } else {
+                cout << "Invalid answer! Defaulting to 'a'." << endl;
+                question.setCorrectAnswer(0);
+            }
 
             // Get explanation
             string explanation;

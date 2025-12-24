@@ -20,7 +20,7 @@ public:
     SimpleExamSystem()
     {
         // Initialize components
-        dbManager = make_unique<DatabaseManager>("../sql/exam.db");
+        dbManager = make_unique<DatabaseManager>("database/exam.db");
         userManager = make_unique<UserManager>();
         authManager = make_unique<SimpleAuthManager>(userManager.get());
 
@@ -253,19 +253,30 @@ private:
             cout << "\nQuestion " << (i + 1) << ":" << endl;
             questions[i].display();
 
-            cout << "\nYour answer (1-4): ";
-            int answer;
-            cin >> answer;
+            cout << "\nYour answer (a-d): ";
+            string inputStr;
+            cin >> inputStr;
+            
+            int answer = 0;
+            if (inputStr.length() == 1) {
+                char c = tolower(inputStr[0]);
+                if (c >= 'a' && c <= 'd') {
+                    answer = c - 'a' + 1; // Convert a-d to 1-4
+                } else if (c >= '1' && c <= '4') {
+                    answer = c - '0'; // Convert '1'-'4' to 1-4
+                }
+            }
 
-            if (answer - 1 == questions[i].getCorrectAnswer())
+            if (answer >= 1 && answer <= 4 && answer - 1 == questions[i].getCorrectAnswer())
             {
                 cout << "Correct!" << endl;
                 score++;
             }
             else
             {
+                char optionLabels[] = {'a', 'b', 'c', 'd'};
                 cout << "Wrong! Correct answer was: "
-                     << (questions[i].getCorrectAnswer() + 1) << endl;
+                     << optionLabels[questions[i].getCorrectAnswer()] << endl;
             }
         }
 

@@ -82,6 +82,25 @@ public:
     }
     
 private:
+    // Helper function to convert answer input (supports both a-d and 1-4)
+    int parseAnswerInput(const string& input) {
+        if (input.length() == 1) {
+            char c = tolower(input[0]);
+            if (c >= 'a' && c <= 'd') {
+                return c - 'a' + 1; // Convert a-d to 1-4
+            }
+            if (c >= '1' && c <= '4') {
+                return c - '0'; // Convert '1'-'4' to 1-4
+            }
+        }
+        // Try to parse as number for special commands
+        try {
+            return stoi(input);
+        } catch (...) {
+            return -999; // Invalid input
+        }
+    }
+    
     // DSA: Custom randomization using Merge Sort
     void randomizeQuestions(vector<Question>& questions) {
         if (questions.empty()) return;
@@ -232,36 +251,21 @@ private:
     }
     
     void startTemplateExam(const ExamTemplate& examTemplate) {
-        // Get questions based on template settings
-        vector<Question> questions;
+        // Get questions specific to this exam template
+        auto examQuestions = dbManager->getExamQuestions(examTemplate.getId());
         
-        if (examTemplate.getDifficulty() == "Mixed") {
-            if (examTemplate.getSubject().empty()) {
-                questions = dbManager->getRandomQuestions(examTemplate.getQuestionCount());
-            } else {
-                questions = dbManager->getRandomQuestions(examTemplate.getQuestionCount(), examTemplate.getSubject());
-            }
-        } else {
-            // Get questions by difficulty and subject
-            auto allQuestions = examTemplate.getSubject().empty() ? 
-                               dbManager->getAllQuestions() : 
-                               dbManager->getQuestionsBySubject(examTemplate.getSubject());
-            
-            // Filter by difficulty
-            vector<Question> filteredQuestions;
-            for (const auto& q : allQuestions) {
-                if (q.getDifficulty() == examTemplate.getDifficulty()) {
-                    filteredQuestions.push_back(q);
-                }
-            }
-            
-            // DSA: Randomize using Merge Sort instead of shuffle
-            if (!filteredQuestions.empty()) {
-                randomizeQuestions(filteredQuestions);  // DSA: Merge Sort randomization
-                
-                int count = min(examTemplate.getQuestionCount(), static_cast<int>(filteredQuestions.size()));
-                questions.assign(filteredQuestions.begin(), filteredQuestions.begin() + count);
-            }
+        // Convert ExamQuestion to Question for compatibility
+        vector<Question> questions;
+        for (const auto& eq : examQuestions) {
+            Question q;
+            q.setId(eq.getId());
+            q.setQuestionText(eq.getQuestionText());
+            q.setOptions(eq.getOptions());
+            q.setCorrectAnswer(eq.getCorrectAnswer());
+            q.setExplanation(eq.getExplanation());
+            q.setSubject(examTemplate.getSubject());
+            q.setDifficulty(examTemplate.getDifficulty());
+            questions.push_back(q);
         }
         
         if (questions.empty()) {
@@ -301,7 +305,7 @@ private:
         }
         
         cout << "\n Instructions:" << endl;
-        cout << "• Enter 1-4 for your answer" << endl;
+        cout << "• Enter a-d or 1-4 for your answer" << endl;
         cout << "• Enter 0 to skip question" << endl;
         cout << "• Enter -1 to go back to previous question" << endl;
         if (examTemplate.isReviewAllowed()) {
@@ -362,15 +366,17 @@ private:
             
             // Show current answer and review status
             if (answered[currentQuestion]) {
-                cout << "\n Current Answer: " << (userAnswers[currentQuestion] + 1) << endl;
+                char optionLabels[] = {'a', 'b', 'c', 'd'};
+                cout << "\n Current Answer: " << optionLabels[userAnswers[currentQuestion]] << ". " << questions[currentQuestion].getOptions()[userAnswers[currentQuestion]] << endl;
             }
             if (examTemplate.isReviewAllowed() && markedForReview[currentQuestion]) {
                 cout << " Marked for Review" << endl;
             }
             
-            cout << "\nYour choice: ";
-            int answer;
-            cin >> answer;
+            cout << "\nYour choice (a-d, 0=skip, -1=previous, -2=submit): ";
+            string inputStr;
+            cin >> inputStr;
+            int answer = parseAnswerInput(inputStr);
             
             if (answer == -2) {
                 // Submit exam
@@ -493,6 +499,7 @@ private:
             
             // Display all options for reference
             auto options = questions[i].getOptions();
+            char optionLabels[] = {'a', 'b', 'c', 'd'};
             for (size_t j = 0; j < options.size(); ++j) {
                 string marker = "";
                 if (j == static_cast<size_t>(questions[i].getCorrectAnswer())) {
@@ -500,14 +507,14 @@ private:
                 } else if (answered[i] && j == static_cast<size_t>(userAnswers[i])) {
                     marker = "  (Your Answer)";
                 }
-                cout << "   " << (j + 1) << ". " << options[j] << marker << endl;
+                cout << "   " << optionLabels[j] << ". " << options[j] << marker << endl;
             }
             
             if (!answered[i]) {
                 cout << "\n    Your Answer:  Not answered" << endl;
                 cout << "    Status:  Incorrect (0 points)" << endl;
             } else {
-                cout << "\n    Your Answer: " << (userAnswers[i] + 1) << ". " << options[userAnswers[i]] << endl;
+                cout << "\n    Your Answer: " << optionLabels[userAnswers[i]] << ". " << options[userAnswers[i]] << endl;
                 if (userAnswers[i] == questions[i].getCorrectAnswer()) {
                     cout << "    Status:  Correct (+1 point)" << endl;
                 } else {
@@ -517,7 +524,7 @@ private:
                     }
                 }
             }
-            cout << "    Correct Answer: " << (questions[i].getCorrectAnswer() + 1) << ". " << options[questions[i].getCorrectAnswer()] << endl;
+            cout << "    Correct Answer: " << optionLabels[questions[i].getCorrectAnswer()] << ". " << options[questions[i].getCorrectAnswer()] << endl;
             
             if (!questions[i].getExplanation().empty()) {
                 cout << "    Explanation: " << questions[i].getExplanation() << endl;
@@ -675,12 +682,14 @@ private:
             questions[currentQuestion].display();
             
             if (answered[currentQuestion]) {
-                cout << "\nCurrent Answer: " << (userAnswers[currentQuestion] + 1) << endl;
+                char optionLabels[] = {'a', 'b', 'c', 'd'};
+                cout << "\nCurrent Answer: " << optionLabels[userAnswers[currentQuestion]] << ". " << questions[currentQuestion].getOptions()[userAnswers[currentQuestion]] << endl;
             }
             
-            cout << "\nYour answer (1-4, 0=skip, -1=previous, -2=submit): ";
-            int answer;
-            cin >> answer;
+            cout << "\nYour answer (a-d, 0=skip, -1=previous, -2=submit): ";
+            string inputStr;
+            cin >> inputStr;
+            int answer = parseAnswerInput(inputStr);
             
             if (answer == -2) {
                 // Submit exam
@@ -765,21 +774,24 @@ private:
                 } else if (answered[i] && j == static_cast<size_t>(userAnswers[i])) {
                     marker = "  (Your Answer)";
                 }
-                cout << "   " << (j + 1) << ". " << options[j] << marker << endl;
+                char optionLabels[] = {'a', 'b', 'c', 'd'};
+                cout << "   " << optionLabels[j] << ". " << options[j] << marker << endl;
             }
             
             if (!answered[i]) {
                 cout << "\n    Your Answer:  Not answered" << endl;
                 cout << "    Status:  Incorrect (0 points)" << endl;
             } else {
-                cout << "\n    Your Answer: " << (userAnswers[i] + 1) << ". " << options[userAnswers[i]] << endl;
+                char optionLabels[] = {'a', 'b', 'c', 'd'};
+                cout << "\n    Your Answer: " << optionLabels[userAnswers[i]] << ". " << options[userAnswers[i]] << endl;
                 if (userAnswers[i] == questions[i].getCorrectAnswer()) {
                     cout << "    Status:  Correct (+1 point)" << endl;
                 } else {
                     cout << "    Status:  Incorrect (0 points)" << endl;
                 }
             }
-            cout << "    Correct Answer: " << (questions[i].getCorrectAnswer() + 1) << ". " << options[questions[i].getCorrectAnswer()] << endl;
+            char optionLabels[] = {'a', 'b', 'c', 'd'};
+            cout << "    Correct Answer: " << optionLabels[questions[i].getCorrectAnswer()] << ". " << options[questions[i].getCorrectAnswer()] << endl;
             
             if (!questions[i].getExplanation().empty()) {
                 cout << "    Explanation: " << questions[i].getExplanation() << endl;
@@ -845,15 +857,17 @@ private:
             cout << string(40, '-') << endl;
             questions[i].display();
             
-            cout << "\nYour answer (1-4): ";
-            int answer;
-            cin >> answer;
+            cout << "\nYour answer (a-d): ";
+            string inputStr;
+            cin >> inputStr;
+            int answer = parseAnswerInput(inputStr);
             
             if (answer >= 1 && answer <= 4 && (answer - 1) == questions[i].getCorrectAnswer()) {
                 cout << " Correct!" << endl;
                 score++;
             } else {
-                cout << " Wrong! Correct answer: " << (questions[i].getCorrectAnswer() + 1) << endl;
+                char optionLabels[] = {'a', 'b', 'c', 'd'};
+                cout << " Wrong! Correct answer: " << optionLabels[questions[i].getCorrectAnswer()] << endl;
                 if (!questions[i].getExplanation().empty()) {
                     cout << "Explanation: " << questions[i].getExplanation() << endl;
                 }
@@ -982,16 +996,18 @@ private:
             cout << string(50, '-') << endl;
             questions[i].display();
             
-            cout << "\nYour answer (1-4): ";
-            int answer;
-            cin >> answer;
+            cout << "\nYour answer (a-d): ";
+            string inputStr;
+            cin >> inputStr;
+            int answer = parseAnswerInput(inputStr);
             
             if (answer >= 1 && answer <= 4 && (answer - 1) == questions[i].getCorrectAnswer()) {
                 cout << " Correct!" << endl;
                 score++;
                 correct[i] = true;
             } else {
-                cout << " Wrong! Correct answer: " << (questions[i].getCorrectAnswer() + 1) << endl;
+                char optionLabels[] = {'a', 'b', 'c', 'd'};
+                cout << " Wrong! Correct answer: " << optionLabels[questions[i].getCorrectAnswer()] << endl;
                 if (!questions[i].getExplanation().empty()) {
                     cout << "Explanation: " << questions[i].getExplanation() << endl;
                 }
@@ -1175,12 +1191,19 @@ private:
     }
     
     string getGrade(double percentage) {
-        if (percentage >= 90) return "A+";
-        else if (percentage >= 80) return "A";
-        else if (percentage >= 70) return "B";
-        else if (percentage >= 60) return "C";
-        else if (percentage >= 50) return "D";
-        else return "F";
+        if (percentage >= 97) return "A+";      // 97-100%
+        else if (percentage >= 93) return "A";  // 93-96%
+        else if (percentage >= 90) return "A-"; // 90-92%
+        else if (percentage >= 87) return "B+"; // 87-89%
+        else if (percentage >= 83) return "B";  // 83-86%
+        else if (percentage >= 80) return "B-"; // 80-82%
+        else if (percentage >= 77) return "C+"; // 77-79%
+        else if (percentage >= 73) return "C";  // 73-76%
+        else if (percentage >= 70) return "C-"; // 70-72%
+        else if (percentage >= 67) return "D+"; // 67-69%
+        else if (percentage >= 63) return "D";  // 63-66%
+        else if (percentage >= 60) return "D-"; // 60-62%
+        else return "F";                         // Below 60%
     }
 };
 
