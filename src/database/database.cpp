@@ -790,9 +790,9 @@ vector<Question> DatabaseManager::getRandomQuestions(int count, const string &su
 bool DatabaseManager::insertExamResult(const ExamResult &result)
 {
     const char *sql = R"(
-        INSERT INTO exam_results (user_id, username, score, total_questions, percentage, 
+        INSERT INTO exam_results (user_id, username, exam_template_id, score, total_questions, percentage, 
                                 exam_date, start_time, end_time, duration, subject, exam_type, exam_name) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     )";
 
     sqlite3_stmt *stmt = prepareStatement(sql);
@@ -801,16 +801,17 @@ bool DatabaseManager::insertExamResult(const ExamResult &result)
 
     sqlite3_bind_int(stmt, 1, result.getUserId());
     sqlite3_bind_text(stmt, 2, result.getUsername().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int(stmt, 3, result.getScore());
-    sqlite3_bind_int(stmt, 4, result.getTotalQuestions());
-    sqlite3_bind_double(stmt, 5, result.getPercentage());
-    sqlite3_bind_text(stmt, 6, result.getExamDate().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 7, result.getStartTime().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 8, result.getEndTime().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int(stmt, 9, result.getDuration());
-    sqlite3_bind_text(stmt, 10, result.getSubject().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 11, result.getExamType().c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 12, result.getTemplateName().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 3, result.getExamTemplateId());
+    sqlite3_bind_int(stmt, 4, result.getScore());
+    sqlite3_bind_int(stmt, 5, result.getTotalQuestions());
+    sqlite3_bind_double(stmt, 6, result.getPercentage());
+    sqlite3_bind_text(stmt, 7, result.getExamDate().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 8, result.getStartTime().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 9, result.getEndTime().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 10, result.getDuration());
+    sqlite3_bind_text(stmt, 11, result.getSubject().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 12, result.getExamType().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 13, result.getTemplateName().c_str(), -1, SQLITE_TRANSIENT);
 
     int res = sqlite3_step(stmt);
     finalizeStatement(stmt);
@@ -822,7 +823,7 @@ vector<ExamResult> DatabaseManager::getExamResultsByUser(int userId)
 {
     vector<ExamResult> results;
     const char *sql = R"(
-        SELECT id, user_id, username, score, total_questions, percentage, exam_date, 
+        SELECT id, user_id, username, exam_template_id, score, total_questions, percentage, exam_date, 
                start_time, end_time, duration, subject, exam_type, exam_name
         FROM exam_results WHERE user_id = ? ORDER BY exam_date DESC;
     )";
@@ -839,16 +840,17 @@ vector<ExamResult> DatabaseManager::getExamResultsByUser(int userId)
             result.setId(sqlite3_column_int(stmt, 0));
             result.setUserId(sqlite3_column_int(stmt, 1));
             result.setUsername(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
-            result.setScore(sqlite3_column_int(stmt, 3));
-            result.setTotalQuestions(sqlite3_column_int(stmt, 4));
+            result.setExamTemplateId(sqlite3_column_int(stmt, 3));
+            result.setScore(sqlite3_column_int(stmt, 4));
+            result.setTotalQuestions(sqlite3_column_int(stmt, 5));
             // percentage is calculated automatically in setScore/setTotalQuestions
-            result.setExamDate(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 6)));
+            result.setExamDate(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 7)));
 
-            const char *startTime = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 7));
-            const char *endTime = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 8));
-            const char *subject = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 10));
-            const char *examType = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 11));
-            const char *examName = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 12));
+            const char *startTime = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 8));
+            const char *endTime = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 9));
+            const char *subject = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 11));
+            const char *examType = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 12));
+            const char *examName = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 13));
 
             if (startTime)
                 result.setStartTime(startTime);
@@ -861,7 +863,7 @@ vector<ExamResult> DatabaseManager::getExamResultsByUser(int userId)
             if (examName)
                 result.setTemplateName(examName);
 
-            result.setDuration(sqlite3_column_int(stmt, 9));
+            result.setDuration(sqlite3_column_int(stmt, 10));
 
             results.push_back(result);
         }
@@ -1004,7 +1006,7 @@ bool Question::operator==(const Question &other) const
 
 // ExamResult class implementation
 ExamResult::ExamResult() : id(0), userId(0), score(0), totalQuestions(0),
-                           percentage(0.0), duration(0)
+                           percentage(0.0), duration(0), examTemplateId(0)
 {
     examDate = Utils::getCurrentDateTime();
 }
@@ -1012,7 +1014,7 @@ ExamResult::ExamResult() : id(0), userId(0), score(0), totalQuestions(0),
 ExamResult::ExamResult(int userId, const string &username, int score, int totalQuestions,
                        const string &subject, const string &difficulty)
     : id(0), userId(userId), username(username), score(score), totalQuestions(totalQuestions),
-      duration(0), subject(subject), difficulty(difficulty)
+      duration(0), subject(subject), difficulty(difficulty), examTemplateId(0)
 {
     examDate = Utils::getCurrentDateTime();
     calculatePercentage();
@@ -1376,7 +1378,7 @@ vector<Question> DatabaseManager::searchQuestions(const string &keyword)
 vector<ExamResult> DatabaseManager::getAllExamResults()
 {
     const char *sql = R"(
-        SELECT id, user_id, username, score, total_questions, percentage, 
+        SELECT id, user_id, username, exam_template_id, score, total_questions, percentage, 
                exam_date, start_time, end_time, duration, subject, exam_type, exam_name 
         FROM exam_results ORDER BY exam_date DESC;
     )";
@@ -1392,33 +1394,34 @@ vector<ExamResult> DatabaseManager::getAllExamResults()
             result.setId(sqlite3_column_int(stmt, 0));
             result.setUserId(sqlite3_column_int(stmt, 1));
             result.setUsername(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2)));
-            result.setScore(sqlite3_column_int(stmt, 3));
-            result.setTotalQuestions(sqlite3_column_int(stmt, 4));
+            result.setExamTemplateId(sqlite3_column_int(stmt, 3));
+            result.setScore(sqlite3_column_int(stmt, 4));
+            result.setTotalQuestions(sqlite3_column_int(stmt, 5));
             // percentage is calculated automatically in setScore/setTotalQuestions
 
-            const char *examDate = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 6));
+            const char *examDate = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 7));
             if (examDate)
                 result.setExamDate(examDate);
 
-            const char *startTime = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 7));
+            const char *startTime = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 8));
             if (startTime)
                 result.setStartTime(startTime);
 
-            const char *endTime = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 8));
+            const char *endTime = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 9));
             if (endTime)
                 result.setEndTime(endTime);
 
-            result.setDuration(sqlite3_column_int(stmt, 9));
+            result.setDuration(sqlite3_column_int(stmt, 10));
 
-            const char *subject = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 10));
+            const char *subject = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 11));
             if (subject)
                 result.setSubject(subject);
 
-            const char *examType = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 11));
+            const char *examType = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 12));
             if (examType)
                 result.setExamType(examType);
 
-            const char *examName = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 12));
+            const char *examName = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 13));
             if (examName)
                 result.setTemplateName(examName);
 

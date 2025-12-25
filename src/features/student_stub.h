@@ -20,24 +20,19 @@ class StudentPanel {
 private:
     DatabaseManager* dbManager;
     User currentStudent;
-    Stack<string> navigationHistory;  // DSA: Stack for navigation history
+    UndoRedoStack<string> navigationHistory;  // DSA: UndoRedoStack for navigation history with undo/redo
     
 public:
     StudentPanel(DatabaseManager* db, const User& student) 
         : dbManager(db), currentStudent(student) {}
     
     void run() {
-        navigationHistory.push("Main Menu");  // DSA: Track navigation
+        navigationHistory.execute("Main Menu");  // DSA: Track navigation
         
         while (true) {
             Utils::clearScreen();
             Utils::printHeader("STUDENT PANEL");
             cout << "Welcome " << currentStudent.getFullName() << endl;
-            
-            // DSA: Show navigation history using Stack
-            if (!navigationHistory.empty()) {
-                cout << "Current Location: " << navigationHistory.top() << endl;
-            }
             
             cout << "\nStudent Menu:" << endl;
             cout << " 1. Take Exam (Quiz/Worksheet/Final)" << endl;
@@ -45,6 +40,12 @@ public:
             cout << " 3. View My Results" << endl;
             cout << " 4. View Profile" << endl;
             cout << " 5. Performance Analytics" << endl;
+            if (navigationHistory.canUndo()) {
+                cout << " 0. Back" << endl;
+            }
+            if (navigationHistory.canRedo()) {
+                cout << " 9. Next" << endl;
+            }
             cout << " 6. Logout" << endl;
             
             cout << "\nEnter your choice: ";
@@ -52,24 +53,47 @@ public:
             cin >> choice;
             
             switch (choice) {
+                case 0:
+                    if (navigationHistory.canUndo()) {
+                        string location = navigationHistory.undo();
+                        cout << "\n← Going back to: " << location << endl;
+                        Utils::pauseSystem();
+                        // Continue loop to show previous menu state
+                    } else {
+                        cout << "\n✗ Cannot go back!" << endl;
+                        Utils::pauseSystem();
+                    }
+                    break;
                 case 1:
-                    navigationHistory.push("Take Exam");  // DSA: Stack navigation
+                    navigationHistory.execute("Take Exam");  // DSA: UndoRedoStack navigation
                     takeExam();
-                    navigationHistory.pop();  // DSA: Return to previous location
                     break;
                 case 2:
-                    navigationHistory.push("Practice Mode");  // DSA: Stack navigation
+                    navigationHistory.execute("Practice Mode");  // DSA: UndoRedoStack navigation
                     practiceMode();
-                    navigationHistory.pop();  // DSA: Return to previous location
                     break;
                 case 3:
+                    navigationHistory.execute("View My Results");
                     viewMyResults();
                     break;
                 case 4:
+                    navigationHistory.execute("View Profile");
                     viewProfile();
                     break;
                 case 5:
+                    navigationHistory.execute("Performance Analytics");
                     performanceAnalytics();
+                    break;
+                case 9:
+                    if (navigationHistory.canRedo()) {
+                        string location = navigationHistory.redo();
+                        cout << "\n→ Going forward to: " << location << endl;
+                        Utils::pauseSystem();
+                        // Continue loop to show next menu state
+                    } else {
+                        cout << "\n✗ Cannot go forward!" << endl;
+                        Utils::pauseSystem();
+                    }
                     break;
                 case 6:
                     cout << "\nLogging out..." << endl;
@@ -443,6 +467,7 @@ private:
         result.setDuration(duration.count());
         result.setExamType(examTemplate.getExamTypeString());
         result.setTemplateName(examTemplate.getTemplateName());
+        result.setExamTemplateId(examTemplate.getId());
         result.setTimeLimit(examTemplate.getTimeLimit());
         result.setNegativeMarking(examTemplate.hasNegativeMarking());
         if (examTemplate.hasNegativeMarking()) {

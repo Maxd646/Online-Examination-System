@@ -129,19 +129,92 @@ bool SimpleAuthManager::isValidUsername(const string &username) const
 
 bool SimpleAuthManager::isValidPassword(const string &password) const
 {
+    // Minimum length requirement
     if (password.length() < 6)
     {
         return false;
     }
-
-    // Password is valid if it's at least 6 characters
-    // More flexible validation - allow numbers-only or letters-only passwords
+    
+    // Maximum length to prevent buffer overflow
+    if (password.length() > 100)
+    {
+        return false;
+    }
+    
+    // Check for invalid characters (no spaces, tabs, or control characters)
+    for (char c : password)
+    {
+        if (iscntrl(c) || c == ' ')
+        {
+            return false;
+        }
+    }
+    
+    // Password is valid if it meets length requirements and has no invalid characters
     return true;
 }
 
 bool SimpleAuthManager::isValidEmail(const string &email) const
 {
-    // Simple email validation
+    // Check if email is empty
+    if (email.empty() || email.length() > 100)
+    {
+        return false;
+    }
+    
+    // Must contain @ symbol
+    if (email.find('@') == string::npos)
+    {
+        return false;
+    }
+    
+    // Must have exactly one @ symbol
+    size_t atCount = 0;
+    for (char c : email)
+    {
+        if (c == '@') atCount++;
+    }
+    if (atCount != 1)
+    {
+        return false;
+    }
+    
+    // Split email into local and domain parts
+    size_t atPos = email.find('@');
+    string localPart = email.substr(0, atPos);
+    string domainPart = email.substr(atPos + 1);
+    
+    // Local part validation (before @)
+    if (localPart.empty() || localPart.length() > 64)
+    {
+        return false;
+    }
+    
+    // Domain part validation (after @)
+    if (domainPart.empty() || domainPart.length() > 255)
+    {
+        return false;
+    }
+    
+    // Domain must contain at least one dot
+    if (domainPart.find('.') == string::npos)
+    {
+        return false;
+    }
+    
+    // Domain must have valid TLD (at least 2 characters after last dot)
+    size_t lastDot = domainPart.rfind('.');
+    if (lastDot == string::npos || lastDot >= domainPart.length() - 1)
+    {
+        return false;
+    }
+    string tld = domainPart.substr(lastDot + 1);
+    if (tld.length() < 2)
+    {
+        return false;
+    }
+    
+    // Use regex for more comprehensive validation
     regex emailRegex(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
     return regex_match(email, emailRegex);
 }
@@ -186,16 +259,80 @@ void SimpleAuthManager::displayCurrentUser() const
 
 bool SimpleAuthManager::validateLoginInput(const string &username, const string &password) const
 {
-    return !username.empty() && !password.empty() &&
-           username.length() <= 50 && password.length() <= 100;
+    // Check for empty inputs
+    if (username.empty() || password.empty())
+    {
+        return false;
+    }
+    
+    // Check for maximum length to prevent buffer overflow
+    if (username.length() > 50 || password.length() > 100)
+    {
+        return false;
+    }
+    
+    // Check for minimum length
+    if (username.length() < 3 || password.length() < 6)
+    {
+        return false;
+    }
+    
+    // Check for invalid characters in username
+    for (char c : username)
+    {
+        if (iscntrl(c) || c == ' ')
+        {
+            return false;
+        }
+    }
+    
+    // Check for invalid characters in password
+    for (char c : password)
+    {
+        if (iscntrl(c))
+        {
+            return false;
+        }
+    }
+    
+    return true;
 }
 
 bool SimpleAuthManager::validateRegistrationInput(const string &username, const string &password,
                                                   const string &email, const string &fullName) const
 {
-    return isValidUsername(username) &&
-           isValidPassword(password) &&
-           isValidEmail(email) &&
-           !fullName.empty() &&
-           fullName.length() <= 100;
+    // Validate username
+    if (!isValidUsername(username))
+    {
+        return false;
+    }
+    
+    // Validate password
+    if (!isValidPassword(password))
+    {
+        return false;
+    }
+    
+    // Validate email
+    if (!isValidEmail(email))
+    {
+        return false;
+    }
+    
+    // Validate full name
+    if (fullName.empty() || fullName.length() > 100)
+    {
+        return false;
+    }
+    
+    // Check for invalid characters in full name (no control characters)
+    for (char c : fullName)
+    {
+        if (iscntrl(c))
+        {
+            return false;
+        }
+    }
+    
+    return true;
 }

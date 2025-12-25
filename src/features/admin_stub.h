@@ -24,7 +24,7 @@ private:
     DatabaseManager *dbManager;
     User currentAdmin;
     Queue<string> pendingOperations;  // DSA: Queue for operation processing
-    Stack<string> operationHistory;   // DSA: Stack for undo functionality
+    UndoRedoStack<string> operationHistory;   // DSA: UndoRedoStack for undo/redo functionality
     LinkedList<string> recentActions; // DSA: Linked List for recent actions
 
 public:
@@ -37,7 +37,7 @@ public:
     void run()
     {
         pendingOperations.push("System Started"); // DSA: Queue operation
-        operationHistory.push("Admin Login");     // DSA: Stack operation
+        operationHistory.execute("Admin Login");     // DSA: UndoRedoStack operation
 
         while (true)
         {
@@ -56,12 +56,19 @@ public:
             cout << "+" << string(58, '=') << "+" << endl;
 
             cout << "\n Welcome " << currentAdmin.getFullName() << "!" << endl;
+            
             cout << "\n Admin Menu:" << endl;
             cout << " 1. Create Complete Exam (Quiz/Worksheet/Final)" << endl;
             cout << " 2. Manage Existing Exams" << endl;
             cout << " 3. User Management" << endl;
             cout << " 4. View System Statistics" << endl;
             cout << " 5. View All Results" << endl;
+            if (operationHistory.canUndo()) {
+                cout << " 0. Back" << endl;
+            }
+            if (operationHistory.canRedo()) {
+                cout << " 9. Next" << endl;
+            }
             cout << " 6. Logout" << endl;
 
             cout << "\n Enter your choice: ";
@@ -70,24 +77,49 @@ public:
 
             switch (choice)
             {
+            case 0:
+                if (operationHistory.canUndo()) {
+                    string location = operationHistory.undo();
+                    cout << "\n← Going back to: " << location << endl;
+                    Utils::pauseSystem();
+                    // Continue loop to show previous menu state
+                } else {
+                    cout << "\n✗ Cannot go back!" << endl;
+                    Utils::pauseSystem();
+                }
+                break;
             case 1:
                 pendingOperations.push("Create Exam Operation"); // DSA: Queue
-                operationHistory.push("Create Exam");            // DSA: Stack
+                operationHistory.execute("Create Exam");            // DSA: UndoRedoStack
                 createCompleteExam();
                 break;
             case 2:
                 pendingOperations.push("Manage Exams Operation"); // DSA: Queue
-                operationHistory.push("Manage Exams");            // DSA: Stack
+                operationHistory.execute("Manage Exams");            // DSA: UndoRedoStack
                 manageExistingExams();
                 break;
             case 3:
+                operationHistory.execute("User Management");
                 userManagement();
                 break;
             case 4:
+                operationHistory.execute("View Statistics");
                 showStatistics();
                 break;
             case 5:
+                operationHistory.execute("View All Results");
                 viewAllResults();
+                break;
+            case 9:
+                if (operationHistory.canRedo()) {
+                    string location = operationHistory.redo();
+                    cout << "\n→ Going forward to: " << location << endl;
+                    Utils::pauseSystem();
+                    // Continue loop to show next menu state
+                } else {
+                    cout << "\n✗ Cannot go forward!" << endl;
+                    Utils::pauseSystem();
+                }
                 break;
             case 6:
                 cout << "\nLogging out..." << endl;
@@ -322,18 +354,36 @@ private:
 
         cout << "Question Count [" << examTemplate.getQuestionCount() << "]: ";
         getline(cin, input);
-        if (!input.empty())
-            examTemplate.setQuestionCount(stoi(input));
+        if (!input.empty()) {
+            int qCount = Utils::safeStoi(input, examTemplate.getQuestionCount());
+            if (qCount < 1 || qCount > 200) {
+                cout << "Warning: Question count must be between 1-200. Keeping current value." << endl;
+            } else {
+                examTemplate.setQuestionCount(qCount);
+            }
+        }
 
         cout << "Time Limit [" << examTemplate.getTimeLimit() << "]: ";
         getline(cin, input);
-        if (!input.empty())
-            examTemplate.setTimeLimit(stoi(input));
+        if (!input.empty()) {
+            int tLimit = Utils::safeStoi(input, examTemplate.getTimeLimit());
+            if (tLimit < 1 || tLimit > 600) {
+                cout << "Warning: Time limit must be between 1-600 minutes. Keeping current value." << endl;
+            } else {
+                examTemplate.setTimeLimit(tLimit);
+            }
+        }
 
         cout << "Passing Percentage [" << examTemplate.getPassingPercentage() << "]: ";
         getline(cin, input);
-        if (!input.empty())
-            examTemplate.setPassingPercentage(stod(input));
+        if (!input.empty()) {
+            double pPercent = Utils::safeStod(input, examTemplate.getPassingPercentage());
+            if (pPercent < 0.0 || pPercent > 100.0) {
+                cout << "Warning: Passing percentage must be between 0-100. Keeping current value." << endl;
+            } else {
+                examTemplate.setPassingPercentage(pPercent);
+            }
+        }
 
         if (dbManager->updateExamTemplate(examTemplate))
         {
@@ -805,8 +855,7 @@ private:
         cout << "1. QUIZ (Short assessment, 10-20 questions)" << endl;
         cout << "2. WORKSHEET (Practice/homework, 20-30 questions)" << endl;
         cout << "3. FINAL (Comprehensive exam, 40-100 questions)" << endl;
-        cout << "Enter choice (1-3): ";
-        cin >> examTypeChoice;
+        examTypeChoice = Utils::getSafeInt("Enter choice (1-3): ", 1, 3);
 
         switch (examTypeChoice)
         {
@@ -829,12 +878,10 @@ private:
         getline(cin, subject);
         newTemplate.setSubject(subject);
 
-        cout << "Number of Questions: ";
-        cin >> questionCount;
+        questionCount = Utils::getSafeInt("Number of Questions (1-200): ", 1, 200);
         newTemplate.setQuestionCount(questionCount);
 
-        cout << "Time Limit (in minutes): ";
-        cin >> timeLimit;
+        timeLimit = Utils::getSafeInt("Time Limit (in minutes, 1-600): ", 1, 600);
         newTemplate.setTimeLimit(timeLimit);
 
         cout << "\nDifficulty Level:" << endl;
@@ -842,9 +889,7 @@ private:
         cout << "2. Medium" << endl;
         cout << "3. Hard" << endl;
         cout << "4. Mixed" << endl;
-        cout << "Enter choice (1-4): ";
-        int diffChoice;
-        cin >> diffChoice;
+        int diffChoice = Utils::getSafeInt("Enter choice (1-4): ", 1, 4);
         switch (diffChoice)
         {
         case 1:
@@ -864,8 +909,7 @@ private:
         }
         newTemplate.setDifficulty(difficulty);
 
-        cout << "Passing Percentage (0-100): ";
-        cin >> passingPercentage;
+        passingPercentage = Utils::getSafeDouble("Passing Percentage (0-100): ", 0.0, 100.0);
         newTemplate.setPassingPercentage(passingPercentage);
 
         cout << "\nAdditional Settings:" << endl;
@@ -877,9 +921,7 @@ private:
 
         if (newTemplate.hasNegativeMarking())
         {
-            double negValue;
-            cout << "Negative Mark Value (e.g., 0.25): ";
-            cin >> negValue;
+            double negValue = Utils::getSafeDouble("Negative Mark Value (0.0-1.0, e.g., 0.25): ", 0.0, 1.0);
             newTemplate.setNegativeMarkValue(negValue);
         }
 

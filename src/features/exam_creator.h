@@ -170,16 +170,12 @@ private:
         }
         examTemplate.setSubject(subject);
 
-        // Get time limit
-        cout << "\nTime Limit (in minutes): ";
-        int timeLimit;
-        cin >> timeLimit;
+        // Get time limit with validation
+        int timeLimit = Utils::getSafeInt("\nTime Limit (in minutes, 1-600): ", 1, 600);
         examTemplate.setTimeLimit(timeLimit);
 
-        // Get passing percentage
-        cout << "Passing Percentage (0-100): ";
-        double passingPercentage;
-        cin >> passingPercentage;
+        // Get passing percentage with validation
+        double passingPercentage = Utils::getSafeDouble("Passing Percentage (0-100): ", 0.0, 100.0);
         examTemplate.setPassingPercentage(passingPercentage);
 
         // Additional settings
@@ -191,9 +187,7 @@ private:
         examTemplate.setNegativeMarking(choice == 'y' || choice == 'Y');
         
         if (examTemplate.hasNegativeMarking()) {
-            double negValue;
-            cout << "Negative Mark Value (e.g., 0.25): ";
-            cin >> negValue;
+            double negValue = Utils::getSafeDouble("Negative Mark Value (0.0-1.0, e.g., 0.25): ", 0.0, 1.0);
             examTemplate.setNegativeMarkValue(negValue);
         }
 
@@ -237,8 +231,15 @@ private:
         cout << " Type: " << examTemplate.getExamTypeString() << endl;
         cout << string(60, '=') << endl;
 
+        // Get current question count to start from the next number
+        int currentCount = dbManager->getExamQuestionCount(examTemplate.getId());
+        int questionNumber = currentCount + 1;
+        
+        cout << " Current questions in exam: " << currentCount << endl;
+        cout << " New questions will start from number: " << questionNumber << endl;
+        cout << string(60, '=') << endl;
+
         vector<ExamQuestion> questions;
-        int questionNumber = 1;
         char continueAdding = 'y';
 
         while (continueAdding == 'y' || continueAdding == 'Y') {
@@ -249,40 +250,42 @@ private:
             question.setExamTemplateId(examTemplate.getId());
             question.setQuestionNumber(questionNumber);
 
-            // Get question text
-            string questionText;
-            cout << "Question: ";
+            // Get question text with validation
             cin.ignore(); // Always clear the input buffer before getline
-            getline(cin, questionText);
+            string questionText = Utils::getSafeString("Question: ", 500, true);
+            if (questionText.empty()) {
+                cout << "Error: Question text cannot be empty!" << endl;
+                continue;
+            }
             question.setQuestionText(questionText);
 
             cout << endl; // Add space before options
 
-            // Get options
+            // Get options with validation
             vector<string> options(4);
             char optionLabels[] = {'a', 'b', 'c', 'd'};
             for (int i = 0; i < 4; ++i) {
-                cout << "Option " << optionLabels[i] << ": ";
-                getline(cin, options[i]);
+                string option = Utils::getSafeString("Option " + string(1, optionLabels[i]) + ": ", 200, true);
+                if (option.empty()) {
+                    cout << "Error: Option cannot be empty!" << endl;
+                    i--; // Retry this option
+                    continue;
+                }
+                options[i] = option;
             }
             question.setOptions(options);
 
             cout << endl; // Add space before correct answer
 
-            // Get correct answer
-            string correctAnswerInput;
-            cout << "Correct Answer (a-d): ";
-            cin >> correctAnswerInput;
-            
+            // Get correct answer with validation
+            char correctAnswerChar = Utils::getSafeChar("Correct Answer (a-d or 1-4): ", "abcd1234");
             int correctAnswer = -1;
-            if (correctAnswerInput.length() == 1) {
-                char c = tolower(correctAnswerInput[0]);
-                if (c >= 'a' && c <= 'd') {
-                    correctAnswer = c - 'a'; // Convert a-d to 0-3
-                } else if (c >= '1' && c <= '4') {
-                    correctAnswer = c - '1'; // Convert 1-4 to 0-3
-                }
+            if (correctAnswerChar >= 'a' && correctAnswerChar <= 'd') {
+                correctAnswer = correctAnswerChar - 'a'; // Convert a-d to 0-3
+            } else if (correctAnswerChar >= '1' && correctAnswerChar <= '4') {
+                correctAnswer = correctAnswerChar - '1'; // Convert 1-4 to 0-3
             }
+            
             if (correctAnswer >= 0 && correctAnswer <= 3) {
                 question.setCorrectAnswer(correctAnswer);
             } else {

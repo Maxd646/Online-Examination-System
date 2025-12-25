@@ -99,18 +99,39 @@ private:
         Utils::clearScreen();
         Utils::printHeader("USER LOGIN");
 
-        string username, password;
-        cout << "Username: ";
-        cin >> username;
-        cout << "Password: ";
-        cin >> password;
+        // Clear any leftover input
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Get username with validation
+        string username = Utils::getSafeStringNoSpaces("Username: ", 50);
+        
+        // Validate username format
+        if (!authManager->isValidUsername(username))
+        {
+            cout << "\n✗ Invalid username format!" << endl;
+            cout << "  Username must be 3-20 characters, alphanumeric and underscore only." << endl;
+            Utils::pauseSystem();
+            return;
+        }
+
+        // Get password with validation
+        string password = Utils::getSafeStringNoSpaces("Password: ", 100);
+        
+        // Validate password format
+        if (!authManager->isValidPassword(password))
+        {
+            cout << "\n✗ Invalid password format!" << endl;
+            cout << "  Password must be at least 6 characters long." << endl;
+            Utils::pauseSystem();
+            return;
+        }
 
         // Use database authentication directly
         User dbUser;
         if (dbManager->authenticateUser(username, password, dbUser))
         {
             // Successful authentication
-            cout << "\n Login successful! Welcome " << dbUser.getFullName() << endl;
+            cout << "\n✓ Login successful! Welcome " << dbUser.getFullName() << endl;
             cout << "Role: " << dbUser.roleToString() << endl;
 
             // Add/update user in memory for auth manager
@@ -137,15 +158,16 @@ private:
             User checkUser = dbManager->getUserByUsername(username);
             if (checkUser.getId() == 0)
             {
-                cout << "\n Login failed: User not found" << endl;
+                cout << "\n✗ Login failed: User not found" << endl;
             }
             else if (checkUser.isAccountLocked())
             {
-                cout << "\n Login failed: Account is locked due to too many failed attempts" << endl;
+                cout << "\n✗ Login failed: Account is locked due to too many failed attempts" << endl;
+                cout << "  Please contact administrator to unlock your account." << endl;
             }
             else
             {
-                cout << "\n Login failed: Invalid password" << endl;
+                cout << "\n✗ Login failed: Invalid password" << endl;
             }
         }
 
@@ -157,27 +179,26 @@ private:
         Utils::clearScreen();
         Utils::printHeader("STUDENT REGISTRATION");
 
+        // Clear any leftover input
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
         string username, password, confirmPassword, email, fullName;
 
-        cout << "Full Name: ";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // FIXED
-        getline(cin, fullName);
-
-        cout << "Username: ";
-        getline(cin, username);
-
-        cout << "Email: ";
-        getline(cin, email);
-
-        cout << "Password: ";
-        getline(cin, password);
-
-        cout << "Confirm Password: ";
-        getline(cin, confirmPassword);
-
-        if (password != confirmPassword)
+        // Get full name with validation
+        fullName = Utils::getSafeString("Full Name: ", 100, true);
+        if (fullName.empty())
         {
-            cout << "\nPasswords don't match!" << endl;
+            cout << "\n✗ Full name cannot be empty!" << endl;
+            Utils::pauseSystem();
+            return;
+        }
+
+        // Get username with validation
+        username = Utils::getSafeStringNoSpaces("Username: ", 50);
+        if (!authManager->isValidUsername(username))
+        {
+            cout << "\n✗ Invalid username format!" << endl;
+            cout << "  Username must be 3-20 characters, alphanumeric and underscore only." << endl;
             Utils::pauseSystem();
             return;
         }
@@ -186,7 +207,37 @@ private:
         User existingUser = dbManager->getUserByUsername(username);
         if (existingUser.getId() != 0)
         {
-            cout << "\n Registration failed! Username already exists." << endl;
+            cout << "\n✗ Registration failed! Username already exists." << endl;
+            Utils::pauseSystem();
+            return;
+        }
+
+        // Get email with validation
+        email = Utils::getSafeString("Email: ", 100, false);
+        if (!authManager->isValidEmail(email))
+        {
+            cout << "\n✗ Invalid email format!" << endl;
+            cout << "  Email must contain @ symbol and be in valid format (e.g., user@example.com)" << endl;
+            Utils::pauseSystem();
+            return;
+        }
+
+        // Get password with validation
+        password = Utils::getSafeStringNoSpaces("Password (min 6 characters): ", 100);
+        if (!authManager->isValidPassword(password))
+        {
+            cout << "\n✗ Invalid password format!" << endl;
+            cout << "  Password must be at least 6 characters long and contain no spaces." << endl;
+            Utils::pauseSystem();
+            return;
+        }
+
+        // Confirm password
+        confirmPassword = Utils::getSafeStringNoSpaces("Confirm Password: ", 100);
+
+        if (password != confirmPassword)
+        {
+            cout << "\n✗ Passwords don't match!" << endl;
             Utils::pauseSystem();
             return;
         }

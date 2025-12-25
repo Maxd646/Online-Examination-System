@@ -223,6 +223,7 @@ private:
     string difficulty;
     string examType; // Quiz, Worksheet, Final
     string templateName; // Name of the template used
+    int examTemplateId; // ID of the exam template
     int timeLimit; // Original time limit
     bool negativeMarking; // Whether negative marking was used
     double negativeMarks; // Negative marks deducted
@@ -250,6 +251,7 @@ public:
     string getDifficulty() const { return difficulty; }
     string getExamType() const { return examType; }
     string getTemplateName() const { return templateName; }
+    int getExamTemplateId() const { return examTemplateId; }
     int getTimeLimit() const { return timeLimit; }
     bool hasNegativeMarking() const { return negativeMarking; }
     double getNegativeMarks() const { return negativeMarks; }
@@ -271,6 +273,7 @@ public:
     void setDifficulty(const string& difficulty) { this->difficulty = difficulty; }
     void setExamType(const string& examType) { this->examType = examType; }
     void setTemplateName(const string& templateName) { this->templateName = templateName; }
+    void setExamTemplateId(int examTemplateId) { this->examTemplateId = examTemplateId; }
     void setTimeLimit(int timeLimit) { this->timeLimit = timeLimit; }
     void setNegativeMarking(bool negativeMarking) { this->negativeMarking = negativeMarking; }
     void setNegativeMarks(double negativeMarks) { this->negativeMarks = negativeMarks; }

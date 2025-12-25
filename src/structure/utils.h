@@ -9,6 +9,8 @@
 #include <sstream>
 #include <algorithm>
 #include <random>
+#include <climits>
+#include <cctype>
 
 using namespace std;
 
@@ -108,6 +110,15 @@ public:
         cout << border << endl;
     }
 
+    // Safe input functions to prevent crashes
+    static string getSafeString(const string &prompt, size_t maxLength = 100, bool allowSpaces = true);
+    static string getSafeStringNoSpaces(const string &prompt, size_t maxLength = 50);
+    static int getSafeInt(const string &prompt, int min = INT_MIN, int max = INT_MAX);
+    static double getSafeDouble(const string &prompt, double min = -1e9, double max = 1e9);
+    static char getSafeChar(const string &prompt, const string &validChars = "");
+    static int safeStoi(const string &str, int defaultValue = 0);
+    static double safeStod(const string &str, double defaultValue = 0.0);
+    
     static void printWelcomeMessage();
     static void printGoodbye();
 };
