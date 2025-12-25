@@ -10,7 +10,6 @@ build/
 *.so
 *.dll
 *.dylib
-* sql/exam.db
 
 # Compiled Object files
 *.slo

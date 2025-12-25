@@ -1,0 +1,5 @@
+C:/Users/hp/exam/build/CMakeFiles/exam_system.dir
+C:/Users/hp/exam/build/CMakeFiles/edit_cache.dir
+C:/Users/hp/exam/build/CMakeFiles/rebuild_cache.dir
+C:/Users/hp/exam/build/CMakeFiles/exam_system_autogen_timestamp_deps.dir
+C:/Users/hp/exam/build/CMakeFiles/exam_system_autogen.dir
