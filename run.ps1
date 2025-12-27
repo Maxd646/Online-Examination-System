@@ -1,5 +1,5 @@
-# Online Examination System Run Script
-# PowerShell script to run the examination system
+
+# PowerShell script
 
 Write-Host "Online Examination System" -ForegroundColor Green
 Write-Host "=========================" -ForegroundColor Green

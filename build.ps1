@@ -1,4 +1,3 @@
-# Online Examination System Build Script
 # PowerShell build script for Windows
 
 Write-Host "Building Online Examination System..." -ForegroundColor Green

@@ -109,4 +109,96 @@ public:
     }
 };
 
+// Navigation History for mobile banking app-like navigation
+// Works like browser history: back goes to previous page, forward goes to next page
+template<typename T>
+class NavigationHistory {
+private:
+    vector<T> history;        // Full navigation history
+    int currentIndex;         // Current position in history
+    
+public:
+    NavigationHistory() : currentIndex(-1) {}
+    
+    // Navigate to a new page (like clicking a link)
+    void navigateTo(const T& location) {
+        // Remove any forward history (if we went back and now navigating forward)
+        if (currentIndex < static_cast<int>(history.size()) - 1) {
+            history.erase(history.begin() + currentIndex + 1, history.end());
+        }
+        
+        // Add new location to history
+        history.push_back(location);
+        currentIndex = history.size() - 1;
+    }
+    
+    // Go back to previous page
+    bool goBack() {
+        if (canGoBack()) {
+            currentIndex--;
+            return true;
+        }
+        return false;
+    }
+    
+    // Go forward to next page
+    bool goForward() {
+        if (canGoForward()) {
+            currentIndex++;
+            return true;
+        }
+        return false;
+    }
+    
+    // Check if we can go back
+    bool canGoBack() const {
+        return currentIndex > 0;
+    }
+    
+    // Check if we can go forward
+    bool canGoForward() const {
+        return currentIndex >= 0 && currentIndex < static_cast<int>(history.size()) - 1;
+    }
+    
+    // Get current location
+    T getCurrent() const {
+        if (currentIndex >= 0 && currentIndex < static_cast<int>(history.size())) {
+            return history[currentIndex];
+        }
+        throw runtime_error("No current location");
+    }
+    
+    // Get previous location (without navigating)
+    T getPrevious() const {
+        if (canGoBack()) {
+            return history[currentIndex - 1];
+        }
+        throw runtime_error("No previous location");
+    }
+    
+    // Get next location (without navigating)
+    T getNext() const {
+        if (canGoForward()) {
+            return history[currentIndex + 1];
+        }
+        throw runtime_error("No next location");
+    }
+    
+    // Clear all history
+    void clear() {
+        history.clear();
+        currentIndex = -1;
+    }
+    
+    // Get history size
+    size_t size() const {
+        return history.size();
+    }
+    
+    // Get current index
+    int getCurrentIndex() const {
+        return currentIndex;
+    }
+};
+
 #endif // STACK_H

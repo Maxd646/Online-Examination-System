@@ -1,4 +1,3 @@
-# Online Examination System Clean Script
 # PowerShell script to clean build files
 
 Write-Host "Cleaning build files..." -ForegroundColor Green

@@ -15,7 +15,17 @@
 #include <map>
 #include <iomanip>
 #include <algorithm>
-#include <iomanip>
+
+// State enum for admin navigation (like mobile banking screens)
+enum class AdminState {
+    MAIN_MENU,
+    CREATE_EXAM,
+    MANAGE_EXAMS,
+    USER_MANAGEMENT,
+    STATISTICS,
+    VIEW_RESULTS,
+    LOGOUT
+};
 
 // Enhanced AdminPanel with question management functionality
 class AdminPanel
@@ -24,110 +34,149 @@ private:
     DatabaseManager *dbManager;
     User currentAdmin;
     Queue<string> pendingOperations;  // DSA: Queue for operation processing
-    UndoRedoStack<string> operationHistory;   // DSA: UndoRedoStack for undo/redo functionality
+    UndoRedoStack<AdminState> operationHistory;   // DSA: UndoRedoStack for navigation history
     LinkedList<string> recentActions; // DSA: Linked List for recent actions
+    AdminState currentState; // Current screen state
 
 public:
     AdminPanel(DatabaseManager *db, const User &admin)
-    {
-        dbManager = db;
-        currentAdmin = admin;
-    }
-
-    void run()
+        : dbManager(db), currentAdmin(admin), currentState(AdminState::MAIN_MENU)
     {
         pendingOperations.push("System Started"); // DSA: Queue operation
-        operationHistory.execute("Admin Login");     // DSA: UndoRedoStack operation
+    }
 
-        while (true)
+    // Main app loop - renders based on current state
+    void run()
+    {
+        while (currentState != AdminState::LOGOUT)
         {
-            Utils::clearScreen();
+            render();
+        }
+    }
 
-            // DSA: Process pending operations using Queue
-            if (!pendingOperations.empty())
-            {
-                cout << "Processing: " << pendingOperations.front() << endl;
-                pendingOperations.pop();
-            }
+private:
+    // Central render function - switches on state (like mobile banking apps)
+    void render()
+    {
+        Utils::clearScreen();
 
-            // Bright admin panel header
-            cout << "\n+" << string(58, '=') << "+" << endl;
-            cout << "|" << setw(35) << "ADMIN PANEL" << setw(23) << "|" << endl;
-            cout << "+" << string(58, '=') << "+" << endl;
+        // DSA: Process pending operations using Queue
+        if (!pendingOperations.empty())
+        {
+            cout << "Processing: " << pendingOperations.front() << endl;
+            pendingOperations.pop();
+        }
 
-            cout << "\n Welcome " << currentAdmin.getFullName() << "!" << endl;
-            
-            cout << "\n Admin Menu:" << endl;
-            cout << " 1. Create Complete Exam (Quiz/Worksheet/Final)" << endl;
-            cout << " 2. Manage Existing Exams" << endl;
-            cout << " 3. User Management" << endl;
-            cout << " 4. View System Statistics" << endl;
-            cout << " 5. View All Results" << endl;
+        // Bright admin panel header
+        cout << "\n+" << string(58, '=') << "+" << endl;
+        cout << "|" << setw(35) << "ADMIN PANEL" << setw(23) << "|" << endl;
+        cout << "+" << string(58, '=') << "+" << endl;
+
+        cout << "\n Welcome " << currentAdmin.getFullName() << "!" << endl;
+
+        switch (currentState)
+        {
+        case AdminState::MAIN_MENU:
+            showMainMenu();
+            break;
+        case AdminState::CREATE_EXAM:
+            createCompleteExam();
+            operationHistory.execute(currentState); // Save CREATE_EXAM state before returning
+            currentState = AdminState::MAIN_MENU; // Return to main menu after creating exam
+            break;
+        case AdminState::MANAGE_EXAMS:
+            manageExistingExams();
+            operationHistory.execute(currentState); // Save MANAGE_EXAMS state before returning
+            currentState = AdminState::MAIN_MENU; // Return to main menu after managing exams
+            break;
+        case AdminState::USER_MANAGEMENT:
+            userManagement();
+            operationHistory.execute(currentState); // Save USER_MANAGEMENT state before returning
+            currentState = AdminState::MAIN_MENU; // Return to main menu after user management
+            break;
+        case AdminState::STATISTICS:
+            showStatistics();
+            operationHistory.execute(currentState); // Save STATISTICS state before returning
+            currentState = AdminState::MAIN_MENU; // Return to main menu after viewing statistics
+            break;
+        case AdminState::VIEW_RESULTS:
+            viewAllResults();
+            operationHistory.execute(currentState); // Save VIEW_RESULTS state before returning
+            currentState = AdminState::MAIN_MENU; // Return to main menu after viewing results
+            break;
+        case AdminState::LOGOUT:
+            cout << "\nLogging out..." << endl;
+            return;
+        }
+    }
+
+    // Main menu display and input handling
+    void showMainMenu()
+    {
+        cout << "\n Admin Menu:" << endl;
+        cout << " 1. Create Complete Exam (Quiz/Worksheet/Final)" << endl;
+        cout << " 2. Manage Existing Exams" << endl;
+        cout << " 3. User Management" << endl;
+        cout << " 4. View System Statistics" << endl;
+        cout << " 5. View All Results" << endl;
+        if (operationHistory.canUndo()) {
+            cout << " 0. ← Back" << endl;
+        }
+        if (operationHistory.canRedo()) {
+            cout << " 9. Next →" << endl;
+        }
+        cout << " 6. Logout" << endl;
+
+        cout << "\n Enter your choice: ";
+        int choice;
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 0:
             if (operationHistory.canUndo()) {
-                cout << " 0. Back" << endl;
-            }
-            if (operationHistory.canRedo()) {
-                cout << " 9. Next" << endl;
-            }
-            cout << " 6. Logout" << endl;
-
-            cout << "\n Enter your choice: ";
-            int choice;
-            cin >> choice;
-
-            switch (choice)
-            {
-            case 0:
-                if (operationHistory.canUndo()) {
-                    string location = operationHistory.undo();
-                    cout << "\n← Going back to: " << location << endl;
-                    Utils::pauseSystem();
-                    // Continue loop to show previous menu state
-                } else {
-                    cout << "\n✗ Cannot go back!" << endl;
-                    Utils::pauseSystem();
-                }
-                break;
-            case 1:
-                pendingOperations.push("Create Exam Operation"); // DSA: Queue
-                operationHistory.execute("Create Exam");            // DSA: UndoRedoStack
-                createCompleteExam();
-                break;
-            case 2:
-                pendingOperations.push("Manage Exams Operation"); // DSA: Queue
-                operationHistory.execute("Manage Exams");            // DSA: UndoRedoStack
-                manageExistingExams();
-                break;
-            case 3:
-                operationHistory.execute("User Management");
-                userManagement();
-                break;
-            case 4:
-                operationHistory.execute("View Statistics");
-                showStatistics();
-                break;
-            case 5:
-                operationHistory.execute("View All Results");
-                viewAllResults();
-                break;
-            case 9:
-                if (operationHistory.canRedo()) {
-                    string location = operationHistory.redo();
-                    cout << "\n→ Going forward to: " << location << endl;
-                    Utils::pauseSystem();
-                    // Continue loop to show next menu state
-                } else {
-                    cout << "\n✗ Cannot go forward!" << endl;
-                    Utils::pauseSystem();
-                }
-                break;
-            case 6:
-                cout << "\nLogging out..." << endl;
-                return;
-            default:
-                cout << "Invalid choice! Please try again." << endl;
+                currentState = operationHistory.undo();
+            } else {
+                cout << "\n✗ Cannot go back!" << endl;
                 Utils::pauseSystem();
             }
+            break;
+        case 1:
+            pendingOperations.push("Create Exam Operation"); // DSA: Queue
+            operationHistory.execute(currentState); // Save current state before navigation
+            currentState = AdminState::CREATE_EXAM;
+            break;
+        case 2:
+            pendingOperations.push("Manage Exams Operation"); // DSA: Queue
+            operationHistory.execute(currentState);
+            currentState = AdminState::MANAGE_EXAMS;
+            break;
+        case 3:
+            operationHistory.execute(currentState);
+            currentState = AdminState::USER_MANAGEMENT;
+            break;
+        case 4:
+            operationHistory.execute(currentState);
+            currentState = AdminState::STATISTICS;
+            break;
+        case 5:
+            operationHistory.execute(currentState);
+            currentState = AdminState::VIEW_RESULTS;
+            break;
+        case 9:
+            if (operationHistory.canRedo()) {
+                currentState = operationHistory.redo();
+            } else {
+                cout << "\n✗ Cannot go forward!" << endl;
+                Utils::pauseSystem();
+            }
+            break;
+        case 6:
+            currentState = AdminState::LOGOUT;
+            break;
+        default:
+            cout << "Invalid choice! Please try again." << endl;
+            Utils::pauseSystem();
         }
     }
 

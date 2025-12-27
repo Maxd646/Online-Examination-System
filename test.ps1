@@ -1,4 +1,5 @@
-# Test script for Online Examination System
+# Test script 
+
 Write-Host "Testing Online Examination System..." -ForegroundColor Green
 
 # Build the project first
@@ -19,27 +20,35 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host ""
-Write-Host "✓ System is ready for testing!" -ForegroundColor Green
+Write-Host "[OK] System is ready for testing!" -ForegroundColor Green
 Write-Host ""
+
+# Authentication info
 Write-Host "Authentication Fixed:" -ForegroundColor Cyan
-Write-Host "  ✓ Simplified login flow" -ForegroundColor White
-Write-Host "  ✓ Proper database authentication" -ForegroundColor White
-Write-Host "  ✓ Memory synchronization" -ForegroundColor White
-Write-Host "  ✓ Account locking protection" -ForegroundColor White
+Write-Host "  - Simplified login flow" -ForegroundColor White
+Write-Host "  - Proper database authentication" -ForegroundColor White
+Write-Host "  - Memory synchronization" -ForegroundColor White
+Write-Host "  - Account locking protection" -ForegroundColor White
 Write-Host ""
+
+# How to run
 Write-Host "To run the system:" -ForegroundColor Cyan
 Write-Host "  .\build\exam_system.exe" -ForegroundColor White
 Write-Host ""
+
+# Test accounts
 Write-Host "Test Accounts:" -ForegroundColor Cyan
-Write-Host "  Admin - Username: admin, Password: admin123" -ForegroundColor White
-Write-Host "  Student - Username: johndoe, Password: password123" -ForegroundColor White
-Write-Host "  Student - Username: testuser, Password: testpass123" -ForegroundColor White
-Write-Host "  Student - Username: newstudent, Password: password123" -ForegroundColor White
+Write-Host "  Admin   - Username: admin     Password: admin123" -ForegroundColor White
+Write-Host "  Student - Username: johndoe   Password: password123" -ForegroundColor White
+Write-Host "  Student - Username: testuser  Password: testpass123" -ForegroundColor White
+Write-Host "  Student - Username: newstudent Password: password123" -ForegroundColor White
 Write-Host "  Or register new student accounts through the system" -ForegroundColor White
 Write-Host ""
+
+# Features
 Write-Host "Available Features:" -ForegroundColor Cyan
-Write-Host "  • User Registration & Login (FIXED)" -ForegroundColor White
-Write-Host "  • Admin Panel (Question Management, User Management)" -ForegroundColor White
-Write-Host "  • Student Panel (Take Exams, Practice Mode, View Results)" -ForegroundColor White
-Write-Host "  • Guest Mode (Practice without registration)" -ForegroundColor White
-Write-Host "  • Performance Analytics" -ForegroundColor White
+Write-Host "  - User Registration & Login (FIXED)" -ForegroundColor White
+Write-Host "  - Admin Panel (Question Management, User Management)" -ForegroundColor White
+Write-Host "  - Student Panel (Take Exams, Practice Mode, View Results)" -ForegroundColor White
+Write-Host "  - Guest Mode (Practice without registration)" -ForegroundColor White
+Write-Host "  - Performance Analytics" -ForegroundColor White

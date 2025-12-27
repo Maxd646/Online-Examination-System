@@ -150,7 +150,7 @@ bool SimpleAuthManager::isValidPassword(const string &password) const
         }
     }
     
-    // Password is valid if it meets length requirements and has no invalid characters
+    // Password is valid 
     return true;
 }
 

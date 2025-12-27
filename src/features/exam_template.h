@@ -8,9 +8,9 @@ using namespace std;
 
 // Exam type enumeration
 enum class ExamType {
-    QUIZ = 1,       // Short, quick assessment (10-15 questions, 15-30 min)
-    WORKSHEET = 2,  // Practice/homework (20-30 questions, 30-60 min)
-    FINAL = 3       // Comprehensive exam (40-100 questions, 90-180 min)
+    QUIZ = 1,       // Short
+    WORKSHEET = 2,  // Practice/homework 
+    FINAL = 3       // Comprehensive exam 
 };
 
 // Exam template class for admin-defined exam configurations
